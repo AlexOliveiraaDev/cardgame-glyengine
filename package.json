@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "prebuild": "tstl",
+    "build": "cd build && gly-cli build-html src/game.lua --fengari --enginecdn --atob --outdir ../dist",
+    "start": "npx serve ./dist",
+    "dev": "concurrently \"npm run start\" \"nodemon --watch src --ext ts,json,lua --exec \\\"npm run build\\\"\""
+  },
+  "dependencies": {
+    "@gamely/gly-cli": "0.1.2",
+    "@gamely/gly-types": "^0.1.2",
+    "npm": "^11.4.1",
+    "typescript-to-lua": "^1.31.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10"
+  }
+}
