@@ -1,215 +1,241 @@
-import { GlyStd, GlyStdNano } from "@gamely/gly-types";
+import { GlyStd } from "@gamely/gly-types";
+import { Hand } from "./core/entity/hand";
+import { Table } from "./core/entity/table";
+import { Enemy } from "./core/enemy/enemy";
+import { Card } from "./core/entity/card";
+
+interface WaitAction {
+  id: string;
+  duration: number;
+  onComplete: () => void;
+  onUpdate?: (progress: number) => void;
+}
+
+class WaitManager {
+  private waitActions: Map<string, { timeLeft: number; action: WaitAction }> = new Map();
+
+  addWait(action: WaitAction) {
+    this.waitActions.set(action.id, { timeLeft: action.duration, action: action });
+  }
+
+  removeWait(id: string) {
+    this.waitActions.delete(id);
+  }
+
+  isWaiting(id: string) {
+    return this.waitActions.has(id);
+  }
+
+  isAnyWaiting(): boolean {
+    return this.waitActions.size > 0;
+  }
+
+  update(dt: number) {
+    const completedActions: string[] = [];
+    this.waitActions.forEach((waitData, id) => {
+      waitData.timeLeft -= dt;
+      const progress = 1 - (waitData.timeLeft - waitData.action.duration);
+
+      if (waitData.action.onUpdate) {
+        waitData.action.onUpdate(Math.min(progress, 1));
+      }
+
+      if (waitData.timeLeft <= 0) {
+        completedActions.push(id);
+      }
+
+      completedActions.forEach((id) => {
+        const waitData = this.waitActions.get(id);
+        if (waitData) {
+          waitData.action.onComplete();
+          this.waitActions.delete(id);
+        }
+      });
+    });
+  }
+
+  getProgress(id: string): number {
+    const waitData = this.waitActions.get(id);
+    if (!waitData) return 0;
+
+    return 1 - waitData.timeLeft / waitData.action.duration;
+  }
+
+  clear() {
+    this.waitActions.clear();
+  }
+}
+
+enum GameState {
+  WAITING_PLAYER_INPUT,
+  PLAYER_TURN_ANIMATION,
+  WAITING_ENEMY_TURN,
+  ENEMY_TURN_ANIMATION,
+  CALCULATING_RESULTS,
+  GAME_OVER,
+}
 
 /*####################################################################*/
 /*############################  Configs  #############################*/
 /*####################################################################*/
 
-export const title = "Gly Engine Gamejam";
-export const author = "Alex Oliveira";
-export const version = "1.0.0";
-export const description = "The best game in the world made in GlyEngine";
-export const assets = [
-  "src/card1.png:card1.png",
-  "src/card2.png:card2.png",
-  "src/card3.png:card3.png",
-  "src/card4.png:card4.png",
-];
+const playerHand = new Hand();
+let timeWait = 0;
+let isWaiting = false;
+let waitingEnemy = false;
+let playerSelectedCard: Card;
+let gameState: GameState = GameState.WAITING_PLAYER_INPUT;
+let gameStateText: string = "";
+const waitManager = new WaitManager();
 
-const CARD_LIST: CardDefinition[] = [
-  { id: "emperor", name: "Emperor", texture: "card1.png" },
-  { id: "high_priestess", name: "High Priestess", texture: "card2.png" },
-  { id: "sun", name: "Sun", texture: "card3.png" },
-  { id: "magician", name: "Magician", texture: "card4.png" },
-];
-
-/*####################################################################*/
-/*############################  Classes  #############################*/
-/*####################################################################*/
-
-class Vector2 {
-  constructor(public x: number, public y: number) {}
-}
-
-class Transform {
-  position: Vector2;
-  scale: Vector2;
-  constructor(position: Vector2, scale: Vector2) {
-    this.position = position;
-    this.scale = scale;
+function handleGameStateText() {
+  switch (gameState) {
+    case GameState.CALCULATING_RESULTS:
+      gameStateText = "CALCULANDO";
+      break;
+    case GameState.ENEMY_TURN_ANIMATION:
+      gameStateText = "ENEMY TURN";
+      break;
+    case GameState.GAME_OVER:
+      gameStateText = "GAME OVER";
+      break;
+    case GameState.WAITING_PLAYER_INPUT:
+      gameStateText = "PLAYERS TURN";
+      break;
+    default:
+      break;
   }
 }
 
-class GameObject {
-  transform: Transform;
-  animator: AnimationController;
+function handlePlayerCardSelection(std: GlyStd) {
+  if (gameState !== GameState.WAITING_PLAYER_INPUT) return;
 
-  constructor(position: Vector2, scale: Vector2) {
-    this.transform = new Transform(position, scale);
-    this.animator = new AnimationController(this);
-  }
+  playerSelectedCard = playerHand.getSelectedCard();
+  table.setPlayerCard(playerSelectedCard);
+  table.lastOpponentCard = null;
 
-  draw(std: any) {
-    std.draw.rect(
-      0,
-      this.transform.position.x,
-      this.transform.position.y,
-      this.transform.scale.x,
-      this.transform.scale.y
-    );
-  }
+  gameState = GameState.PLAYER_TURN_ANIMATION;
 
-  update(dt) {
-    this.animator.update(dt);
-  }
-
-  start(position: Vector2, duration: number) {
-    this.animator.start(position, duration);
-  }
+  waitManager.addWait({
+    id: "player_card_animation",
+    duration: 0.5,
+    onComplete: () => {
+      gameState = GameState.WAITING_ENEMY_TURN;
+      handleEnemyTurn();
+    },
+    onUpdate: (progress) => {},
+  });
 }
 
-class AnimationController {
-  private active = false;
-  private startPosition: Vector2;
-  private endPosition: Vector2;
-  private duration = 0;
-  private elapsed = 0;
+function handleEnemyTurn() {
+  if (gameState !== GameState.WAITING_ENEMY_TURN) return;
+  gameState = GameState.ENEMY_TURN_ANIMATION;
+  waitManager.addWait({
+    id: "enemy_thinking",
+    duration: 0.5,
+    onComplete: () => {
+      let enemySelectedCard: Card = opponent.getBestCard(playerSelectedCard);
+      console.log(enemySelectedCard.name);
+      table.setOpponentCard(enemySelectedCard);
 
-  constructor(private obj: GameObject) {}
-
-  start(position: Vector2, duration: number) {
-    this.startPosition = this.obj.transform.position;
-    this.endPosition = position;
-    this.duration = duration;
-    this.elapsed = 0;
-    this.active = true;
-  }
-
-  update(dt) {
-    if (!this.active) return;
-    this.elapsed += dt / 1000;
-    const t = Math.min(this.elapsed / this.duration, 1);
-    const easedT = 1 - Math.pow(1 - t, 5);
-    this.obj.transform.position.x = this.startPosition.x + (this.endPosition.x - this.startPosition.x) * easedT;
-    this.obj.transform.position.y = this.startPosition.y + (this.endPosition.y - this.startPosition.y) * easedT;
-
-    if (easedT >= 1) {
-      this.active = false;
-      this.obj.transform.position.x = this.endPosition.x;
-      this.obj.transform.position.y = this.endPosition.y;
-    }
-  }
+      waitManager.addWait({
+        id: "enemy_card_animation",
+        duration: 0.5,
+        onComplete: () => {
+          handleGameCalculation();
+        },
+      });
+    },
+    onUpdate: (progress) => {},
+  });
 }
 
-class Card extends GameObject {
-  active: boolean;
-  private isUp: boolean = false;
-  public name: string;
-  public id: string;
-  private texture: string;
-  constructor(cardInfo: CardDefinition) {
-    super(new Vector2(100, 100), new Vector2(100, 100));
-    this.id = cardInfo.id;
-    this.name = cardInfo.name;
-    this.texture = cardInfo.texture;
-  }
-  up() {
-    this.start({ x: this.transform.position.x, y: this.transform.position.y - 50 }, 0.5);
-    this.isUp = true;
-  }
-  down() {
-    if (!this.isUp) return;
-    this.start({ x: this.transform.position.x, y: this.transform.position.y + 50 }, 0.5);
-    this.isUp = false;
-  }
+function handleGameCalculation() {
+  console.log(waitManager.isAnyWaiting());
 
-  drawCard(std: any) {
-    std.draw.image(this.texture, this.transform.position.x, this.transform.position.y);
-  }
+  gameState = GameState.CALCULATING_RESULTS;
+  waitManager.addWait({
+    id: "calculating_results",
+    duration: 0.5,
+    onComplete: () => {
+      table.calculeWin();
+      gameState = GameState.WAITING_PLAYER_INPUT;
+    },
+    onUpdate: (progress) => {
+      console.log(`Calculando resultado: ${Math.round(progress * 100)}%`);
+    },
+  });
 }
 
-interface CardDefinition {
-  id: string;
-  name: string;
-  texture: string;
-}
+const opponent = new Enemy();
+let table: Table;
+let pressed = false;
 
-class Hand {
-  private cards: Card[] = [];
-  selectedCard = 0;
-  generateNewHand() {
-    console.log("# Generating New Hand #");
-    let newCard: Card = undefined;
-    for (let i = 0; i < 3; i++) {
-      newCard = this.getNewCard();
-      console.log("Get card with success:", newCard);
-      let cardCount = 0;
-      for (let n = 0; n < this.cards.length; n++) {
-        if (cardCount == 2) break;
-        const card = this.cards[n];
-        if (card.id === newCard.id) cardCount++;
-      }
-      if (cardCount >= 2) {
-        let reserveCard = this.getNewCard();
-        while (newCard.id === reserveCard.id) {
-          reserveCard = this.getNewCard();
-        }
-
-        this.cards.push(reserveCard);
-      } else {
-        this.cards.push(newCard);
-      }
-    }
-    console.log("Finished generating new hand!");
-  }
-  getNewCard() {
-    console.log("Generating Card...");
-    return new Card(CARD_LIST[Math.floor(Math.random() * CARD_LIST.length)]);
-  }
-  drawHandCards(std: GlyStd) {
-    this.cards.forEach((card) => {
-      card.drawCard(std);
-    });
-  }
-  updateState(std: GlyStd) {
-    this.cards.forEach((card) => {
-      card.update(std);
-    });
-  }
-  setCardsPosition(screenWidth: number, screenHeight: number) {
-    let newPosition: Vector2 = new Vector2(0, 0);
-    const spacing = 50;
-    const cardWidth = 126;
-    const cardHeight = 186;
-    const totalWidth = this.cards.length * spacing + (this.cards.length - 1) * cardWidth;
-    let x = (screenWidth - totalWidth) / 2;
-
-    this.cards.forEach((card) => {
-      card.transform.position = new Vector2(x, screenHeight - cardHeight - spacing);
-      x += 160;
-    });
-  }
-}
-
-/*####################################################################*/
-/*######################  LOGICA DO JOGO  ############################*/
-/*####################################################################*/
-
-const hand = new Hand();
-
+export const meta = {
+  title: "Your Awesome Game",
+  author: "IntellectualAuthor",
+  version: "1.0.0",
+  description: "The best game in the world made in GlyEngine",
+};
 function init(std: GlyStd, game: any) {
-  hand.generateNewHand();
-  hand.setCardsPosition(game.width, game.height);
+  playerHand.generateNewHand();
+  playerHand.setCardsPosition(std.app.width, std.app.height);
+  opponent.hand.generateNewHand();
+  table = new Table(std);
 }
 
-function loop(std: GlyStd, game: any) {
-  hand.updateState(std);
+async function loop(std: GlyStd, game: any) {
+  handleGameStateText();
+  waitManager.update(std.delta / 1000);
+
+  table.tick(std.delta);
+
+  if (std.key.press.left && gameState === GameState.WAITING_PLAYER_INPUT) {
+    if (!pressed) {
+      console.log("pressed left");
+      playerHand.switchActiveCard(false);
+    }
+  }
+  if (std.key.press.right && gameState === GameState.WAITING_PLAYER_INPUT) {
+    if (!pressed) {
+      console.log("pressed right");
+      playerHand.switchActiveCard(true);
+    }
+  }
+  if (std.key.press.a) {
+    if (!pressed) {
+      console.log("pressed z");
+      handlePlayerCardSelection(std);
+    }
+  }
+
+  if (std.key.press.any) pressed = true;
+  else pressed = false;
+  playerHand.updateState(std);
 }
+
+let doOnce = false;
 
 function draw(std: GlyStd, game: any) {
-  std.draw.clear(std.color.black);
-  hand.drawHandCards(std);
+  std.text.put(100, 100, gameStateText, 10);
+  if (doOnce === false) {
+    std.media.video().src("bg.mp4").resize(std.app.width, std.app.height).play();
+    doOnce = true;
+  }
+  table.renderCurrentCard();
+  playerHand.drawHandCards(std);
 }
+
+function key(key) {}
 
 function exit(std: GlyStd, game: any) {}
 
-export { init, loop, draw, exit };
+export const config = { require: "http media.video" };
+
+export const callbacks = {
+  init,
+  loop,
+  draw,
+  exit,
+  key,
+};

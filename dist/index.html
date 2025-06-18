@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Gly Engine Gamejam - 1.0.0</title>
+    <title>Your Awesome Game - 1.0.0</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="theme-color" content="#000000"/>
     <meta name="description" content="The best game in the world made in GlyEngine"/>
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Gly Engine Gamejam" />
+    <meta property="og:title" content="Your Awesome Game" />
     <meta property="og:description" content="The best game in the world made in GlyEngine"/>
-    <meta property="twitter:title" content="Gly Engine Gamejam" />
+    <meta property="twitter:title" content="Your Awesome Game" />
     <meta property="twitter:description" content="The best game in the world made in GlyEngine" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <style>
@@ -45,9 +45,8 @@
     <main>
       <canvas id="gameCanvas" ></canvas>
     </main>
-
-    <script src="index.js" defer></script>
-        <script src="https://cdn.jsdelivr.net/npm/fengari-web@latest/dist/fengari-web.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/video.js@8.22.0/dist/video.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/fengari-web@latest/dist/fengari-web.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@gamely/core-native-html5@0.1.4" defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
@@ -67,7 +66,7 @@
           .set_library('player-fake', window.videofake)
           .set_library('player-videojs', window.videojs)
           .set_engine(`https://cdn.jsdelivr.net/npm/@gamely/gly-engine@0.1.2/dist/main.lua`)
-          .set_game(`${window.game_code}`)
+          .set_game(`game.lua`)
           .build()
       })
     </script>
