@@ -1,70 +1,12 @@
 import { GlyStd } from "@gamely/gly-types";
-import { Hand } from "./core/entity/hand";
-import { Table } from "./core/entity/table";
-import { Enemy } from "./core/enemy/enemy";
-import { Card } from "./core/entity/card";
-
-interface WaitAction {
-  id: string;
-  duration: number;
-  onComplete: () => void;
-  onUpdate?: (progress: number) => void;
-}
-
-class WaitManager {
-  private waitActions: Map<string, { timeLeft: number; action: WaitAction }> = new Map();
-
-  addWait(action: WaitAction) {
-    this.waitActions.set(action.id, { timeLeft: action.duration, action: action });
-  }
-
-  removeWait(id: string) {
-    this.waitActions.delete(id);
-  }
-
-  isWaiting(id: string) {
-    return this.waitActions.has(id);
-  }
-
-  isAnyWaiting(): boolean {
-    return this.waitActions.size > 0;
-  }
-
-  update(dt: number) {
-    const completedActions: string[] = [];
-    this.waitActions.forEach((waitData, id) => {
-      waitData.timeLeft -= dt;
-      const progress = 1 - (waitData.timeLeft - waitData.action.duration);
-
-      if (waitData.action.onUpdate) {
-        waitData.action.onUpdate(Math.min(progress, 1));
-      }
-
-      if (waitData.timeLeft <= 0) {
-        completedActions.push(id);
-      }
-
-      completedActions.forEach((id) => {
-        const waitData = this.waitActions.get(id);
-        if (waitData) {
-          waitData.action.onComplete();
-          this.waitActions.delete(id);
-        }
-      });
-    });
-  }
-
-  getProgress(id: string): number {
-    const waitData = this.waitActions.get(id);
-    if (!waitData) return 0;
-
-    return 1 - waitData.timeLeft / waitData.action.duration;
-  }
-
-  clear() {
-    this.waitActions.clear();
-  }
-}
+import { Table } from "./game/entity/table";
+import { Card } from "./game/entity/card";
+import { Enemy } from "./game/enemy/enemy";
+import { CARD_LIST } from "./game/cards/cardList";
+import { Player } from "./game/player/player";
+import { WaitManager } from "./core/utils/waitManager";
+import { UpgradeOffer } from "./game/upgrades/upgradeOffer";
+import { UPGRADE_CARD_LIST } from "./game/upgrades/upgradeList";
 
 enum GameState {
   WAITING_PLAYER_INPUT,
@@ -73,35 +15,33 @@ enum GameState {
   ENEMY_TURN_ANIMATION,
   CALCULATING_RESULTS,
   GAME_OVER,
+  CHOOSING_UPGRADE,
 }
 
 /*####################################################################*/
 /*############################  Configs  #############################*/
 /*####################################################################*/
 
-const playerHand = new Hand();
-let timeWait = 0;
-let isWaiting = false;
-let waitingEnemy = false;
-let playerSelectedCard: Card;
+const upgradeDeck = new UpgradeOffer();
+
 let gameState: GameState = GameState.WAITING_PLAYER_INPUT;
 let gameStateText: string = "";
 const waitManager = new WaitManager();
+const player = new Player();
 
 function handleGameStateText() {
   switch (gameState) {
-    case GameState.CALCULATING_RESULTS:
-      gameStateText = "CALCULANDO";
-      break;
-    case GameState.ENEMY_TURN_ANIMATION:
-      gameStateText = "ENEMY TURN";
+    case GameState.WAITING_ENEMY_TURN:
+      gameStateText = "VEZ DO OPONENTE";
       break;
     case GameState.GAME_OVER:
       gameStateText = "GAME OVER";
       break;
     case GameState.WAITING_PLAYER_INPUT:
-      gameStateText = "PLAYERS TURN";
+      gameStateText = "SUA VEZ";
       break;
+    case GameState.CHOOSING_UPGRADE:
+      gameStateText = "ESCOLHA UM UPGRADE";
     default:
       break;
   }
@@ -110,8 +50,7 @@ function handleGameStateText() {
 function handlePlayerCardSelection(std: GlyStd) {
   if (gameState !== GameState.WAITING_PLAYER_INPUT) return;
 
-  playerSelectedCard = playerHand.getSelectedCard();
-  table.setPlayerCard(playerSelectedCard);
+  table.setPlayerCard(player.getSelectedCard());
   table.lastOpponentCard = null;
 
   gameState = GameState.PLAYER_TURN_ANIMATION;
@@ -134,7 +73,7 @@ function handleEnemyTurn() {
     id: "enemy_thinking",
     duration: 0.5,
     onComplete: () => {
-      let enemySelectedCard: Card = opponent.getBestCard(playerSelectedCard);
+      let enemySelectedCard: Card = opponent.getBestCard(table.getPlayerCard());
       console.log(enemySelectedCard.name);
       table.setOpponentCard(enemySelectedCard);
 
@@ -166,6 +105,10 @@ function handleGameCalculation() {
     },
   });
 }
+function handleChooseUpgradeCard() {
+  gameState = GameState.CHOOSING_UPGRADE;
+  upgradeDeck.generateNewUpgrades(UPGRADE_CARD_LIST);
+}
 
 const opponent = new Enemy();
 let table: Table;
@@ -178,55 +121,90 @@ export const meta = {
   description: "The best game in the world made in GlyEngine",
 };
 function init(std: GlyStd, game: any) {
-  playerHand.generateNewHand();
-  playerHand.setCardsPosition(std.app.width, std.app.height);
-  opponent.hand.generateNewHand();
-  table = new Table(std);
+  player.hand.generateNewHand(CARD_LIST);
+  player.hand.setCardsPosition(std.app.width, std.app.height);
+
+  opponent.hand.generateNewHand(CARD_LIST);
+  handleChooseUpgradeCard();
+  table = new Table(std, player);
 }
 
 async function loop(std: GlyStd, game: any) {
   handleGameStateText();
   waitManager.update(std.delta / 1000);
-
   table.tick(std.delta);
-
-  if (std.key.press.left && gameState === GameState.WAITING_PLAYER_INPUT) {
-    if (!pressed) {
-      console.log("pressed left");
-      playerHand.switchActiveCard(false);
-    }
-  }
-  if (std.key.press.right && gameState === GameState.WAITING_PLAYER_INPUT) {
-    if (!pressed) {
-      console.log("pressed right");
-      playerHand.switchActiveCard(true);
-    }
-  }
-  if (std.key.press.a) {
-    if (!pressed) {
-      console.log("pressed z");
-      handlePlayerCardSelection(std);
-    }
-  }
-
+  player.hand.updateState(std);
+  upgradeDeck.updateState(std);
   if (std.key.press.any) pressed = true;
   else pressed = false;
-  playerHand.updateState(std);
 }
 
 let doOnce = false;
 
 function draw(std: GlyStd, game: any) {
-  std.text.put(100, 100, gameStateText, 10);
   if (doOnce === false) {
     std.media.video().src("bg.mp4").resize(std.app.width, std.app.height).play();
+    upgradeDeck.setCardsCenterPosition(std.app.width, std.app.height);
     doOnce = true;
   }
-  table.renderCurrentCard();
-  playerHand.drawHandCards(std);
+
+  if (gameState === GameState.CHOOSING_UPGRADE) {
+    upgradeDeck.drawHandCards(std);
+  } else {
+    table.renderCurrentCard();
+    player.hand.drawHandCards(std);
+  }
+
+  std.draw.color(std.color.white);
+
+  std.text.font_size(14);
+  std.text.font_name("tiny.ttf");
+  std.text.print(std.app.width / 2 - gameStateText.length * 3, 20, gameStateText);
+  std.text.print(std.app.width / 2 - gameStateText.length * 3, 40, "Valor carta: " + table.playerCardValue);
 }
 
-function key(key) {}
+function key(std: GlyStd, key) {
+  if (GameState.WAITING_PLAYER_INPUT) {
+    if (std.key.press.left) {
+      if (!pressed) {
+        console.log("pressed left");
+        player.hand.switchActiveCard(false);
+      }
+    }
+    if (std.key.press.right) {
+      if (!pressed) {
+        console.log("pressed right");
+        player.hand.switchActiveCard(true);
+      }
+    }
+
+    if (std.key.press.a) {
+      if (!pressed) {
+        console.log("pressed z");
+        handlePlayerCardSelection(std);
+      }
+    }
+  }
+  if (GameState.CHOOSING_UPGRADE) {
+    if (std.key.press.left) {
+      if (!pressed) {
+        console.log("pressed left");
+        upgradeDeck.switchActiveCard(false);
+      }
+    }
+
+    if (std.key.press.right) {
+      if (!pressed) {
+        console.log("pressed right");
+        upgradeDeck.switchActiveCard(true);
+      }
+    }
+    if (std.key.press.a) {
+      player.addUpgrade(upgradeDeck.getSelectedUpgrade());
+      gameState = GameState.WAITING_PLAYER_INPUT;
+    }
+  }
+}
 
 function exit(std: GlyStd, game: any) {}
 

@@ -1,5 +1,5 @@
-import { Card } from "../entity/card";
-import { Hand } from "../entity/hand";
+import { Card } from "../../game/entity/card";
+import { Hand } from "../player/hand";
 
 export class Enemy {
   hand: Hand;

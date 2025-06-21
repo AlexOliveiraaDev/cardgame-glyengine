@@ -1,4 +1,4 @@
-import { CardDefinition } from "../core/entity/card";
+import { CardDefinition } from "../entity/card";
 
 export const CARD_LIST: CardDefinition[] = [
   { id: "clubs_2", name: "2 of Clubs", texture: "Clubs_2.png", value: 2, is_special: 0, special_effect: 0 },

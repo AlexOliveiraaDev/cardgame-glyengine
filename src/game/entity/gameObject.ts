@@ -1,6 +1,6 @@
-import { Vector2 } from "../spatial/vector2";
-import { Transform } from "../spatial/transform";
-import { AnimationController } from "../animation/animationController";
+import { Vector2 } from "../../core/spatial/vector2";
+import { Transform } from "../../core/spatial/transform";
+import { AnimationController } from "../../core/animation/animationController";
 
 export class GameObject {
   transform: Transform;

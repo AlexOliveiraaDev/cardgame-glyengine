@@ -1,17 +1,17 @@
 import { GlyStd } from "@gamely/gly-types";
-import { Vector2 } from "../spatial/vector2";
-import { Card } from "./card";
-import { CARD_LIST } from "../../cards/cardList";
+import { Vector2 } from "../../core/spatial/vector2";
+import { Card, CardDefinition } from "../entity/card";
 
 export class Hand {
-  private cards: Card[] = [];
+  cards: Card[] = [];
+  upgrades: Card[] = [];
   selectedCard = 0;
   cardsQuantity = 5;
-  generateNewHand() {
+  generateNewHand(deck: CardDefinition[]) {
     console.log("# Generating New Hand #");
     let newCard: Card = undefined;
     for (let i = 0; i < this.cardsQuantity; i++) {
-      newCard = this.getNewCard();
+      newCard = this.getNewCard(deck);
       console.log("Get card with success:", newCard);
       let cardCount = 0;
       for (let n = 0; n < this.cards.length; n++) {
@@ -21,9 +21,9 @@ export class Hand {
         if (card.id === newCard.id) cardCount++;
       }
       if (cardCount >= 2) {
-        let reserveCard = this.getNewCard();
+        let reserveCard = this.getNewCard(deck);
         while (newCard.id === reserveCard.id) {
-          reserveCard = this.getNewCard();
+          reserveCard = this.getNewCard(deck);
         }
 
         this.cards.push(reserveCard);
@@ -33,9 +33,9 @@ export class Hand {
     }
     console.log("Finished generating new hand!");
   }
-  getNewCard() {
+  getNewCard(deck: CardDefinition[]) {
     console.log("Generating Card...");
-    return new Card(CARD_LIST[Math.floor(Math.random() * CARD_LIST.length)]);
+    return new Card(deck[Math.floor(Math.random() * deck.length)]);
   }
   drawHandCards(std: GlyStd) {
     this.cards.forEach((card) => {
@@ -93,6 +93,10 @@ export class Hand {
 
   getAllCards() {
     return this.cards;
+  }
+
+  addNewUpgrade(upgrade: Card) {
+    this.upgrades.push(upgrade);
   }
 
   use() {}
