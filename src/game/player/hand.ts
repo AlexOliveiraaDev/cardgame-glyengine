@@ -99,5 +99,10 @@ export class Hand {
     this.upgrades.push(upgrade);
   }
 
+  removeCardById(id: string) {
+    const index = this.cards.findIndex((card) => card.id === id);
+    if (index !== -1) this.cards.splice(index, 1);
+  }
+
   use() {}
 }

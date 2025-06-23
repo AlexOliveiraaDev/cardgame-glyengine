@@ -1,69 +1,69 @@
 local math = ((function() local x, y = pcall(require, 'math'); return x and y end)()) or _G.math
-local source_version_1e3230 = nil
-local source_shared_functional_decorator_1e4b50 = nil
-local source_shared_engine_loadcore_1cb628 = nil
-local source_shared_engine_loadgame_27cef8 = nil
-local source_engine_api_draw_fps_1cb600 = nil
-local source_engine_api_draw_poly_1f5ec0 = nil
-local source_engine_api_draw_text_1dbb68 = nil
-local source_engine_api_draw_ui_24fc60 = nil
-local source_engine_api_data_array_1e2b68 = nil
-local source_engine_api_data_encoder_1d55c0 = nil
-local source_engine_api_data_hash_1d5950 = nil
-local source_engine_api_data_i18n_26d518 = nil
-local source_engine_api_debug_log_1fdc20 = nil
-local source_engine_api_io_http_1fd260 = nil
-local source_engine_api_io_media_1e79d8 = nil
-local source_engine_api_io_storage_27efa0 = nil
-local source_engine_api_raw_bus_1f3d60 = nil
-local source_engine_api_raw_memory_1f7528 = nil
-local source_engine_api_raw_node_1fb7b8 = nil
-local source_engine_api_system_color_1fc180 = nil
-local source_engine_api_system_app_1fc6d8 = nil
-local source_engine_api_system_key_1f4ea8 = nil
-local source_engine_api_system_math_1e5870 = nil
-local source_engine_protocol_http_callback_1e6500 = nil
-local source_shared_var_object_root_1dc540 = nil
-local source_shared_var_object_std_21e250 = nil
-local source_shared_functional_pipeline_2029e0 = nil
-local source_shared_string_dsl_requires_29df90 = nil
-local source_shared_string_eval_file_332e70 = nil
-local source_shared_string_eval_code_2f43b0 = nil
-local source_engine_api_draw_ui_jsx_2cf330 = nil
-local source_engine_api_draw_ui_grid_2a7b48 = nil
-local source_engine_api_draw_ui_slide_1e0bb0 = nil
-local source_engine_api_draw_ui_style_1da3d8 = nil
-local source_shared_var_object_node_1e2c70 = nil
-local source_shared_string_encode_http_1dd500 = nil
-local source_shared_string_encode_url_1c7578 = nil
-local source_engine_api_draw_ui_common_1c91b8 = nil
-local function main_1e5358()
-local version = source_version_1e3230()
-local util_decorator = source_shared_functional_decorator_1e4b50()
-local loadcore = source_shared_engine_loadcore_1cb628()
-local loadgame = source_shared_engine_loadgame_27cef8()
-local engine_draw_fps = source_engine_api_draw_fps_1cb600()
-local engine_draw_poly = source_engine_api_draw_poly_1f5ec0()
-local engine_draw_text = source_engine_api_draw_text_1dbb68()
-local engine_draw_ui = source_engine_api_draw_ui_24fc60()
-local engine_array = source_engine_api_data_array_1e2b68()
-local engine_encoder = source_engine_api_data_encoder_1d55c0()
-local engine_hash = source_engine_api_data_hash_1d5950()
-local engine_i18n = source_engine_api_data_i18n_26d518()
-local engine_log = source_engine_api_debug_log_1fdc20()
-local engine_http = source_engine_api_io_http_1fd260()
-local engine_media = source_engine_api_io_media_1e79d8()
-local engine_storage = source_engine_api_io_storage_27efa0()
-local engine_raw_bus = source_engine_api_raw_bus_1f3d60()
-local engine_raw_memory = source_engine_api_raw_memory_1f7528()
-local engine_raw_node = source_engine_api_raw_node_1fb7b8()
-local engine_color = source_engine_api_system_color_1fc180()
-local engine_game = source_engine_api_system_app_1fc6d8()
-local engine_key = source_engine_api_system_key_1f4ea8()
-local engine_math = source_engine_api_system_math_1e5870()
-local callback_http = source_engine_protocol_http_callback_1e6500()
-local application_default = source_shared_var_object_root_1dc540()
-local std = source_shared_var_object_std_21e250()
+local source_version_201e60 = nil
+local source_shared_functional_decorator_1eb3c8 = nil
+local source_shared_engine_loadcore_1dbfc0 = nil
+local source_shared_engine_loadgame_26fd48 = nil
+local source_engine_api_draw_fps_1dbf98 = nil
+local source_engine_api_draw_poly_1f30d0 = nil
+local source_engine_api_draw_text_1f8090 = nil
+local source_engine_api_draw_ui_1f62f0 = nil
+local source_engine_api_data_array_2718f8 = nil
+local source_engine_api_data_encoder_2003b0 = nil
+local source_engine_api_data_hash_1ddd48 = nil
+local source_engine_api_data_i18n_1e22f0 = nil
+local source_engine_api_debug_log_1f71c0 = nil
+local source_engine_api_io_http_2d5e80 = nil
+local source_engine_api_io_media_2d6718 = nil
+local source_engine_api_io_storage_2d6ff0 = nil
+local source_engine_api_raw_bus_285428 = nil
+local source_engine_api_raw_memory_1fcba0 = nil
+local source_engine_api_raw_node_1fd558 = nil
+local source_engine_api_system_color_1fdf20 = nil
+local source_engine_api_system_app_1fe928 = nil
+local source_engine_api_system_key_1eeee0 = nil
+local source_engine_api_system_math_1ef958 = nil
+local source_engine_protocol_http_callback_23a750 = nil
+local source_shared_var_object_root_1f8ae0 = nil
+local source_shared_var_object_std_1dfe48 = nil
+local source_shared_functional_pipeline_1f7c10 = nil
+local source_shared_string_dsl_requires_217108 = nil
+local source_shared_string_eval_file_2092d8 = nil
+local source_shared_string_eval_code_209830 = nil
+local source_engine_api_draw_ui_jsx_1dfae0 = nil
+local source_engine_api_draw_ui_grid_1f97a0 = nil
+local source_engine_api_draw_ui_slide_1fc0a8 = nil
+local source_engine_api_draw_ui_style_1fc3d8 = nil
+local source_shared_var_object_node_1c1fb0 = nil
+local source_shared_string_encode_http_1cae20 = nil
+local source_shared_string_encode_url_1f8178 = nil
+local source_engine_api_draw_ui_common_1ba050 = nil
+local function main_1e28a0()
+local version = source_version_201e60()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
+local loadcore = source_shared_engine_loadcore_1dbfc0()
+local loadgame = source_shared_engine_loadgame_26fd48()
+local engine_draw_fps = source_engine_api_draw_fps_1dbf98()
+local engine_draw_poly = source_engine_api_draw_poly_1f30d0()
+local engine_draw_text = source_engine_api_draw_text_1f8090()
+local engine_draw_ui = source_engine_api_draw_ui_1f62f0()
+local engine_array = source_engine_api_data_array_2718f8()
+local engine_encoder = source_engine_api_data_encoder_2003b0()
+local engine_hash = source_engine_api_data_hash_1ddd48()
+local engine_i18n = source_engine_api_data_i18n_1e22f0()
+local engine_log = source_engine_api_debug_log_1f71c0()
+local engine_http = source_engine_api_io_http_2d5e80()
+local engine_media = source_engine_api_io_media_2d6718()
+local engine_storage = source_engine_api_io_storage_2d6ff0()
+local engine_raw_bus = source_engine_api_raw_bus_285428()
+local engine_raw_memory = source_engine_api_raw_memory_1fcba0()
+local engine_raw_node = source_engine_api_raw_node_1fd558()
+local engine_color = source_engine_api_system_color_1fdf20()
+local engine_game = source_engine_api_system_app_1fe928()
+local engine_key = source_engine_api_system_key_1eeee0()
+local engine_math = source_engine_api_system_math_1ef958()
+local callback_http = source_engine_protocol_http_callback_23a750()
+local application_default = source_shared_var_object_root_1f8ae0()
+local std = source_shared_var_object_std_1dfe48()
 local application = application_default
 local engine = {
 current = application_default,
@@ -233,11 +233,11 @@ version=version
 }
 return P
 end
-source_version_1e3230 = function()
+source_version_201e60 = function()
 return '0.1.2'
 end
 --
-source_shared_functional_decorator_1e4b50 = function()
+source_shared_functional_decorator_1eb3c8 = function()
 local function decorator_prefix3(zig, zag, zom, func)
 return function (a, b, c, d, e, f)
 return func(zig, zag, zom, a, b, c, d, e, f)
@@ -295,9 +295,9 @@ prefix1_t = table_prefix1
 return P
 end
 --
-source_shared_engine_loadcore_1cb628 = function()
-local zeebo_pipeline = source_shared_functional_pipeline_2029e0()
-local requires = source_shared_string_dsl_requires_29df90()
+source_shared_engine_loadcore_1dbfc0 = function()
+local zeebo_pipeline = source_shared_functional_pipeline_1f7c10()
+local requires = source_shared_string_dsl_requires_217108()
 local function step_install_libsys(self, lib_name, library, custom, is_system)
 if not is_system then return end
 local ok, msg = pcall(function()
@@ -379,9 +379,9 @@ setup = setup
 return P
 end
 --
-source_shared_engine_loadgame_27cef8 = function()
-local eval_file = source_shared_string_eval_file_332e70()
-local eval_code = source_shared_string_eval_code_2f43b0()
+source_shared_engine_loadgame_26fd48 = function()
+local eval_file = source_shared_string_eval_file_2092d8()
+local eval_code = source_shared_string_eval_code_209830()
 local has_io_open = io and io.open
 local function normalize(app, base)
 if not app then return nil end
@@ -446,7 +446,7 @@ script = script
 return P
 end
 --
-source_engine_api_draw_fps_1cb600 = function()
+source_engine_api_draw_fps_1dbf98 = function()
 local function draw_fps(std, engine, show, pos_x, pos_y)
 if show < 1 then return end
 local x = engine.current.config.offset_x + pos_x
@@ -495,7 +495,7 @@ install=install
 return P
 end
 --
-source_engine_api_draw_poly_1f5ec0 = function()
+source_engine_api_draw_poly_1f30d0 = function()
 local function decorator_poo(object, func)
 if not object or not func then return func end
 return function(a, b, c, d)
@@ -602,8 +602,8 @@ install=install
 return P
 end
 --
-source_engine_api_draw_text_1dbb68 = function()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_draw_text_1f8090 = function()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function text_put(std, engine, font_previous, pos_x, pos_y, text, size)
 size = size or 2
 local hem = engine.current.data.width / 80
@@ -630,12 +630,12 @@ install=install
 return P
 end
 --
-source_engine_api_draw_ui_24fc60 = function()
-local ui_jsx = source_engine_api_draw_ui_jsx_2cf330()
-local ui_grid = source_engine_api_draw_ui_grid_2a7b48()
-local ui_slide = source_engine_api_draw_ui_slide_1e0bb0()
-local ui_style = source_engine_api_draw_ui_style_1da3d8()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_draw_ui_1f62f0 = function()
+local ui_jsx = source_engine_api_draw_ui_jsx_1dfae0()
+local ui_grid = source_engine_api_draw_ui_grid_1f97a0()
+local ui_slide = source_engine_api_draw_ui_slide_1fc0a8()
+local ui_style = source_engine_api_draw_ui_style_1fc3d8()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function install(std, engine, application)
 std.ui = std.ui or {}
 std.h = util_decorator.prefix2(std, engine, ui_jsx.h)
@@ -649,8 +649,8 @@ install=install
 return P
 end
 --
-source_engine_api_data_array_1e2b68 = function()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_data_array_2718f8 = function()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function array_map(array, func)
 local res = {}
 local index = 1
@@ -811,7 +811,7 @@ install = install
 return P
 end
 --
-source_engine_api_data_encoder_1d55c0 = function()
+source_engine_api_data_encoder_2003b0 = function()
 local function install(std, engine, library, name)
 std = std or {}
 std[name] = {
@@ -826,7 +826,7 @@ install=install
 return P
 end
 --
-source_engine_api_data_hash_1d5950 = function()
+source_engine_api_data_hash_1ddd48 = function()
 local function djb2(digest)
 local index = 1
 local hash = 5381
@@ -850,7 +850,7 @@ install = install
 return P
 end
 --
-source_engine_api_data_i18n_26d518 = function()
+source_engine_api_data_i18n_1e22f0 = function()
 local language = 'en-US'
 local language_default = 'en-US'
 local language_list = {}
@@ -942,8 +942,8 @@ install=install
 return P
 end
 --
-source_engine_api_debug_log_1fdc20 = function()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_debug_log_1f71c0 = function()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local logging_types = {
 'none', 'fatal', 'error', 'warn', 'debug', 'info'
 }
@@ -989,8 +989,8 @@ install = install
 return P
 end
 --
-source_engine_api_io_http_1fd260 = function()
-local zeebo_pipeline = source_shared_functional_pipeline_2029e0()
+source_engine_api_io_http_2d5e80 = function()
+local zeebo_pipeline = source_shared_functional_pipeline_1f7c10()
 local function json(self)
 self.options['json'] = true
 return self
@@ -1153,7 +1153,7 @@ install=install
 return P
 end
 --
-source_engine_api_io_media_1e79d8 = function()
+source_engine_api_io_media_2d6718 = function()
 local function media_create(node, channels, handler)
 local decorator = function(func)
 func = func or function() end
@@ -1200,8 +1200,8 @@ install=install
 return P
 end
 --
-source_engine_api_io_storage_27efa0 = function()
-local zeebo_pipeline = source_shared_functional_pipeline_2029e0()
+source_engine_api_io_storage_2d6ff0 = function()
+local zeebo_pipeline = source_shared_functional_pipeline_1f7c10()
 local function storage_as(engine, self, name, cast)
 if cast == nil then
 cast = function(v) return v end
@@ -1282,7 +1282,7 @@ install=install
 return P
 end
 --
-source_engine_api_raw_bus_1f3d60 = function()
+source_engine_api_raw_bus_285428 = function()
 local ev_prefixes = {
 'pre_',
 '',
@@ -1389,7 +1389,7 @@ install=install
 return P
 end
 --
-source_engine_api_raw_memory_1f7528 = function()
+source_engine_api_raw_memory_1fcba0 = function()
 local memory_dict_unload = {}
 local memory_dict = {}
 local memory_list = {}
@@ -1444,9 +1444,9 @@ install=install
 return P
 end
 --
-source_engine_api_raw_node_1fb7b8 = function()
-local loadgame = source_shared_engine_loadgame_27cef8()
-local node_default = source_shared_var_object_node_1e2c70()
+source_engine_api_raw_node_1fd558 = function()
+local loadgame = source_shared_engine_loadgame_26fd48()
+local node_default = source_shared_var_object_node_1c1fb0()
 local buses = {
 list = {},
 inverse_list = {},
@@ -1569,7 +1569,7 @@ install=install
 return P
 end
 --
-source_engine_api_system_color_1fc180 = function()
+source_engine_api_system_color_1fdf20 = function()
 local function install(std)
 std.color = std.color or {}
 std.color.white = 0xFFFFFFFF
@@ -1604,8 +1604,8 @@ install = install
 return P
 end
 --
-source_engine_api_system_app_1fc6d8 = function()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_system_app_1fe928 = function()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function reset(std, engine)
 if std.node then
 std.bus.emit('exit')
@@ -1645,7 +1645,7 @@ install=install
 return P
 end
 --
-source_engine_api_system_key_1f4ea8 = function()
+source_engine_api_system_key_1eeee0 = function()
 local function real_key(std, engine, rkey, rvalue)
 local value = rvalue == 1 or rvalue == true
 local key = engine.key_bindings[rkey] or (std.key.axis[rkey] and rkey)
@@ -1682,7 +1682,7 @@ install = install
 return P
 end
 --
-source_engine_api_system_math_1e5870 = function()
+source_engine_api_system_math_1ef958 = function()
 local function abs(value)
 if value < 0 then
 return -value
@@ -1857,9 +1857,9 @@ install = install_clib_random
 return P;
 end
 --
-source_engine_protocol_http_callback_1e6500 = function()
-local str_http = source_shared_string_encode_http_1dd500()
-local str_url = source_shared_string_encode_url_1c7578()
+source_engine_protocol_http_callback_23a750 = function()
+local str_http = source_shared_string_encode_http_1cae20()
+local str_url = source_shared_string_encode_url_1f8178()
 local callbacks = {
 ['async-promise'] = function(self)
 return self:promise()
@@ -1926,7 +1926,7 @@ func = native_http_callback
 return P
 end
 --
-source_shared_var_object_root_1dc540 = function()
+source_shared_var_object_root_1f8ae0 = function()
 local P = {
 data={
 width=1280,
@@ -1956,7 +1956,7 @@ callbacks={
 return P;
 end
 --
-source_shared_var_object_std_21e250 = function()
+source_shared_var_object_std_1dfe48 = function()
 local P = {
 milis = 0,
 delta = 0,
@@ -2022,7 +2022,7 @@ any=false
 return P;
 end
 --
-source_shared_functional_pipeline_2029e0 = function()
+source_shared_functional_pipeline_1f7c10 = function()
 local function pipe(self)
 return function()
 self:run()
@@ -2072,7 +2072,7 @@ run=run
 return P
 end
 --
-source_shared_string_dsl_requires_29df90 = function()
+source_shared_string_dsl_requires_217108 = function()
 local function encode(dsl_string)
 local spec = {
 list = {},
@@ -2121,7 +2121,7 @@ should_import = should_import
 return P
 end
 --
-source_shared_string_eval_file_332e70 = function()
+source_shared_string_eval_file_2092d8 = function()
 local function script(src)
 local ok, app = false, nil
 if require then
@@ -2147,7 +2147,7 @@ script = script,
 return P
 end
 --
-source_shared_string_eval_code_2f43b0 = function()
+source_shared_string_eval_code_209830 = function()
 local function script(src)
 local loader = loadstring or load
 if not loader then
@@ -2168,7 +2168,7 @@ script = script,
 return P
 end
 --
-source_engine_api_draw_ui_jsx_2cf330 = function()
+source_engine_api_draw_ui_jsx_1dfae0 = function()
 local function h(std, engine, element, attribute, ...)
 local childs = {...}
 local el_type = type(element)
@@ -2196,9 +2196,9 @@ h = h
 return P
 end
 --
-source_engine_api_draw_ui_grid_2a7b48 = function()
-local ui_common = source_engine_api_draw_ui_common_1c91b8()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_draw_ui_grid_1f97a0 = function()
+local ui_common = source_engine_api_draw_ui_common_1ba050()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function dir(std, engine, self, mode)
 self.direction = mode
 return self
@@ -2306,9 +2306,9 @@ component = component
 return P
 end
 --
-source_engine_api_draw_ui_slide_1e0bb0 = function()
-local ui_common = source_engine_api_draw_ui_common_1c91b8()
-local util_decorator = source_shared_functional_decorator_1e4b50()
+source_engine_api_draw_ui_slide_1fc0a8 = function()
+local ui_common = source_engine_api_draw_ui_common_1ba050()
+local util_decorator = source_shared_functional_decorator_1eb3c8()
 local function slider_next(self, to)
 local incr = to or 1
 self.index = self.index + incr
@@ -2410,7 +2410,7 @@ component = component
 return P
 end
 --
-source_engine_api_draw_ui_style_1da3d8 = function()
+source_engine_api_draw_ui_style_1fc3d8 = function()
 local style = {
 list = {},
 dict = {}
@@ -2445,7 +2445,7 @@ component = component
 return P
 end
 --
-source_shared_var_object_node_1e2c70 = function()
+source_shared_var_object_node_1c1fb0 = function()
 local P = {
 data={
 width=1280,
@@ -2463,7 +2463,7 @@ callbacks={
 return P;
 end
 --
-source_shared_string_encode_http_1dd500 = function()
+source_shared_string_encode_http_1cae20 = function()
 local function is_ok(status)
 return (status and 200 <= status and status < 300) or false
 end
@@ -2610,7 +2610,7 @@ create_request=create_request
 }
 end
 --
-source_shared_string_encode_url_1c7578 = function()
+source_shared_string_encode_url_1f8178 = function()
 local function search_param(param_list, param_dict)
 local index, params = 1, ''
 while param_list and param_dict and index <= #param_list do
@@ -2632,7 +2632,7 @@ search_param = search_param
 return P
 end
 --
-source_engine_api_draw_ui_common_1c91b8 = function()
+source_engine_api_draw_ui_common_1ba050 = function()
 local function gap(self, space_between_items)
 self.px_gap = space_between_items or 0
 return self
@@ -2680,4 +2680,4 @@ add_items=add_items,
 return P
 end
 --
-return main_1e5358()
+return main_1e28a0()

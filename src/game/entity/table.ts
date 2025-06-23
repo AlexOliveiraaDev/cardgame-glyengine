@@ -3,31 +3,35 @@ import { Card, CardDefinition } from "./card";
 import { Vector2 } from "../../core/spatial/vector2";
 import { Player } from "../player/player";
 import { applyComboNaipes } from "../upgrades/upgradeEffects";
+import { Opponent } from "../opponent/opponent";
 
 export class Table {
   lastOpponentCard: Card;
   lastPlayerCard: Card;
-  playerCardHistory: Card[];
-  opponentCardHistory: Card[];
+  playerCardHistory: Card[] = [];
+  opponentCardHistory: Card[] = [];
   currentCard: Card;
   std: GlyStd;
   player: Player;
+  opponent: Opponent;
 
   cardWidth = 30;
   cardHeight = 120;
   playerHit = false;
-  enemyHit = false;
-  timer = 0;
+  opponentHit = false;
+  playerTimer = 0;
+  opponentTimer = 0;
 
   playerCardTexture = "";
-  enemyCardTexture = "";
+  opponentCardTexture = "";
 
-  playerCardValue: number;
-  opponentCardValue: number;
+  playerCardValue: number = 0;
+  opponentCardValue: number = 0;
 
-  constructor(std: GlyStd, player: Player) {
+  constructor(std: GlyStd, player: Player, opponent: Opponent) {
     this.std = std;
     this.player = player;
+    this.opponent = opponent;
   }
 
   setPlayerCard(card: Card) {
@@ -38,9 +42,11 @@ export class Table {
     );
     instanceCard.transform.position = position;
     this.lastPlayerCard = instanceCard;
+    this.playerCardValue = this.lastPlayerCard.value;
     this.lastPlayerCard.up();
     this.playerCardTexture = instanceCard.texture;
     this.playerCardHistory.unshift(instanceCard);
+    this.player.hand.removeCardById(this.getPlayerCard().id);
   }
 
   setOpponentCard(card: Card) {
@@ -51,8 +57,10 @@ export class Table {
     );
     instanceCard.transform.position = position;
     this.lastOpponentCard = instanceCard;
-    this.enemyCardTexture = instanceCard.texture;
+    this.opponentCardValue = this.lastOpponentCard.value;
+    this.opponentCardTexture = instanceCard.texture;
     this.opponentCardHistory.unshift(instanceCard);
+    this.opponent.hand.removeCardById(this.getOpponentCard().id);
   }
 
   createCardInstance(card: Card) {
@@ -78,10 +86,12 @@ export class Table {
 
   calculeWin() {
     console.log("calcule win");
-    const playerWin = this.lastPlayerCard.value > this.lastOpponentCard.value;
 
-    if (playerWin) {
-      this.enemyHit = true;
+    if (this.playerCardValue > this.opponentCardValue) {
+      this.opponentHit = true;
+    } else if (this.playerCardValue === this.opponentCardValue) {
+      this.playerHit = true;
+      this.opponentHit = true;
     } else this.playerHit = true;
   }
 
@@ -90,7 +100,7 @@ export class Table {
     upgrades.forEach((upgrade) => {
       switch (upgrade.special_effect) {
         case 1:
-          this.playerCardValue = applyComboNaipes(this.getOpponentCardHistory(), this.playerCardValue);
+          this.lastPlayerCard.value = applyComboNaipes(this.getOpponentCardHistory(), this.lastPlayerCard.value);
           break;
         case 2:
           //applyCartaMarcada();
@@ -145,29 +155,38 @@ export class Table {
     return this.opponentCardHistory;
   }
 
-  tick(dt) {
-    if (this.lastPlayerCard) console.log(this.lastPlayerCard.texture);
+  hitPlayer(dt: number) {
+    this.lastPlayerCard.texture = "card_damage.png";
+    if (this.playerTimer <= 1) {
+      this.playerTimer += dt / 100;
+    } else {
+      this.playerHit = false;
+      this.playerTimer = 0;
+      this.opponent.matchPoints++;
 
+      this.lastPlayerCard.texture = this.playerCardTexture;
+    }
+  }
+
+  hitOpponent(dt: number) {
+    this.lastOpponentCard.texture = "card_damage.png";
+    if (this.opponentTimer <= 1) {
+      this.opponentTimer += dt / 100;
+    } else {
+      this.opponentHit = false;
+      this.opponentTimer = 0;
+      this.player.matchPoints++;
+      this.lastOpponentCard.texture = this.opponentCardTexture;
+    }
+  }
+
+  tick(dt) {
     if (this.playerHit) {
-      this.lastPlayerCard.texture = "card_damage.png";
-      if (this.timer <= 1) {
-        this.timer += dt / 100;
-      } else {
-        this.playerHit = false;
-        this.timer = 0;
-        this.lastPlayerCard.texture = this.playerCardTexture;
-      }
+      this.hitPlayer(dt);
     }
 
-    if (this.enemyHit) {
-      this.lastOpponentCard.texture = "card_damage.png";
-      if (this.timer <= 1) {
-        this.timer += dt / 100;
-      } else {
-        this.enemyHit = false;
-        this.timer = 0;
-        this.lastOpponentCard.texture = this.enemyCardTexture;
-      }
+    if (this.opponentHit) {
+      this.hitOpponent(dt);
     }
   }
 }

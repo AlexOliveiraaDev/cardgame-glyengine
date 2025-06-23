@@ -10,6 +10,7 @@ export class UpgradeOffer {
 
   generateNewUpgrades(deck: UpgradeCardDefinition[]) {
     console.log("# Generating New Hand #");
+    this.upgrades = [];
     let newCard: UpgradeCard = undefined;
     for (let i = 0; i < this.cardsQuantity; i++) {
       newCard = this.getNewCard(deck);
