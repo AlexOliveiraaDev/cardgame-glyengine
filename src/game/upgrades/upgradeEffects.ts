@@ -1,4 +1,4 @@
-import { Card } from "../entity/card";
+import { Card } from "../entities/card";
 
 export function applyComboNaipes(cardHistory: Card[], value: number): number {
   const cardType = cardHistory[0].id.split("_")[0];

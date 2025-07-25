@@ -1,4 +1,6 @@
+.DS_Store
+Thumbs.db
+vendor
+dist
+cli.lua
 node_modules
-build
-.github
-package-lock.json

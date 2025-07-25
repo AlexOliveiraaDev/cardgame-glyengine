@@ -1,5 +1,5 @@
 import { Vector2 } from "../spatial/vector2";
-import { GameObject } from "../../game/entity/gameObject";
+import { GameObject } from "../../game/entities/gameObject";
 
 export class AnimationController {
   private active = false;

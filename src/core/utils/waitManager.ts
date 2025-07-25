@@ -1,61 +1,83 @@
-interface WaitAction {
+interface WaitItem {
   id: string;
   duration: number;
+  elapsed: number;
   onComplete: () => void;
   onUpdate?: (progress: number) => void;
 }
 
 export class WaitManager {
-  private waitActions: Map<string, { timeLeft: number; action: WaitAction }> = new Map();
+  private waitQueue: WaitItem[] = [];
 
-  addWait(action: WaitAction) {
-    this.waitActions.set(action.id, { timeLeft: action.duration, action: action });
+  addWait(config: { id: string; duration: number; onComplete: () => void; onUpdate?: (progress: number) => void }) {
+    // Remove wait existente com mesmo ID
+    this.removeWait(config.id);
+
+    const waitItem: WaitItem = {
+      id: config.id,
+      duration: config.duration,
+      elapsed: 0,
+      onComplete: config.onComplete,
+      onUpdate: config.onUpdate,
+    };
+
+    this.waitQueue.push(waitItem);
+    console.log(`Added wait: ${config.id} for ${config.duration}s`);
   }
 
   removeWait(id: string) {
-    this.waitActions.delete(id);
-  }
-
-  isWaiting(id: string) {
-    return this.waitActions.has(id);
-  }
-
-  isAnyWaiting(): boolean {
-    return this.waitActions.size > 0;
-  }
-
-  update(dt: number) {
-    const completedActions: string[] = [];
-    this.waitActions.forEach((waitData, id) => {
-      waitData.timeLeft -= dt;
-      const progress = 1 - (waitData.timeLeft - waitData.action.duration);
-
-      if (waitData.action.onUpdate) {
-        waitData.action.onUpdate(Math.min(progress, 1));
-      }
-
-      if (waitData.timeLeft <= 0) {
-        completedActions.push(id);
-      }
-
-      completedActions.forEach((id) => {
-        const waitData = this.waitActions.get(id);
-        if (waitData) {
-          waitData.action.onComplete();
-          this.waitActions.delete(id);
-        }
-      });
-    });
-  }
-
-  getProgress(id: string): number {
-    const waitData = this.waitActions.get(id);
-    if (!waitData) return 0;
-
-    return 1 - waitData.timeLeft / waitData.action.duration;
+    const index = this.waitQueue.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      this.waitQueue.splice(index, 1);
+      console.log(`Removed wait: ${id}`);
+    }
   }
 
   clear() {
-    this.waitActions.clear();
+    console.log(`Clearing ${this.waitQueue.length} waits`);
+    this.waitQueue = [];
+  }
+
+  tick(deltaTime: number) {
+    // Converter deltaTime de milissegundos para segundos se necessário
+    const dt = deltaTime > 1 ? deltaTime / 1000 : deltaTime;
+
+    for (let i = this.waitQueue.length - 1; i >= 0; i--) {
+      const waitItem = this.waitQueue[i];
+      waitItem.elapsed += dt;
+
+      // Calcular progresso (0 a 1)
+      const progress = Math.min(waitItem.elapsed / waitItem.duration, 1);
+
+      // Chamar callback de update se existir
+      if (waitItem.onUpdate) {
+        waitItem.onUpdate(progress);
+      }
+
+      // Verificar se completou
+      if (waitItem.elapsed >= waitItem.duration) {
+        // Chamar callback de complete
+        waitItem.onComplete();
+
+        // Remover da fila
+        this.waitQueue.splice(i, 1);
+        console.log(`Completed wait: ${waitItem.id}`);
+      }
+    }
+  }
+
+  hasWait(id: string): boolean {
+    return this.waitQueue.some((item) => item.id === id);
+  }
+
+  getWaitProgress(id: string): number {
+    const waitItem = this.waitQueue.find((item) => item.id === id);
+    if (!waitItem) return 0;
+
+    return Math.min(waitItem.elapsed / waitItem.duration, 1);
+  }
+
+  getActiveWaits(): string[] {
+    return this.waitQueue.map((item) => item.id);
   }
 }
