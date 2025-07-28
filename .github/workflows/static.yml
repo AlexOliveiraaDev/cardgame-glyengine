@@ -3,7 +3,7 @@ name: cd
 on:
   push:
     branches:
-      - main
+      - recovered-detached
     paths:
       - "src/*"
       - ".github/workflows/CD.yml"
