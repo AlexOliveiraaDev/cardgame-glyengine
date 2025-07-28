@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title> - 0.0.0</title>
+    <title>Card Game - 1.0.0</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="theme-color" content="#000000"/>
     <meta name="description" content=""/>
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="" />
+    <meta property="og:title" content="Card Game" />
     <meta property="og:description" content=""/>
-    <meta property="twitter:title" content="" />
+    <meta property="twitter:title" content="Card Game" />
     <meta property="twitter:description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <style>
@@ -36,9 +36,9 @@
         }
         canvas {
           position: absolute;
+          image-rendering: pixelated;
         }
     </style>
-    <style>canvas { image-rendering: pixelated; }</style>
     <style>body { background-color: gray; }</style>
   </head>
   <body>
@@ -47,7 +47,7 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/video.js@8.22.0/dist/video.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/fengari-web@latest/dist/fengari-web.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@gamely/core-native-html5@0.1.8" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@gamely/core-native-html5@0.1.4" defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         window.gly = await core_native_html5()
@@ -65,7 +65,7 @@
           .set_library('player-youtube')
           .set_library('player-fake', window.videofake)
           .set_library('player-videojs', window.videojs)
-          .set_engine(`https://cdn.jsdelivr.net/npm/@gamely/gly-engine@0.1.5/dist/main.lua`)
+          .set_engine(`https://cdn.jsdelivr.net/npm/@gamely/gly-engine@0.1.2/dist/main.lua`)
           .set_game(`game.lua`)
           .build()
       })

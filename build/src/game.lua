@@ -288,7 +288,6 @@ local function loop(std, game)
 end
 local function draw(std, game)
     std.draw.clear(std.color.black)
-    gameManager:render()
     std.draw.color(std.color.white)
     std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL)
     std.text.font_name(GameConfig.UI_FONT_NAME)
@@ -304,6 +303,7 @@ local function draw(std, game)
         std,
         gameManager:getOpponent()
     )
+    gameManager:render()
     local playerUpgrades = gameManager:getPlayer():getUpgrades()
     if #playerUpgrades > 0 then
         printUpgradeInfo(std, playerUpgrades)
