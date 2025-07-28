@@ -97,7 +97,7 @@ function handleOpponentTurn() {
   });
 }
 
-function resetGame() {
+function resetGame(std) {
   player.matchPoints = 0;
   opponent.matchPoints = 0;
   player.hand.generateNewHand(CARD_LIST);
@@ -124,13 +124,13 @@ function handleGameCalculation() {
           waitManager.clear();
           gameState = GameState.CHOOSING_UPGRADE;
           upgradeDeck.generateNewUpgrades(UPGRADE_CARD_LIST);
-          upgradeDeck.setCardsCenterPosition(std.app.width, std.app.height);
+          upgradeDeck.setCardsCenterPosition(this.std.app.width, this.std.app.height);
         } else {
           console.log("Jogador perdeu");
           waitManager.clear();
           gameState = GameState.GAME_OVER;
         }
-        upgradeDeck.setCardsCenterPosition(std.app.width, std.app.height);
+        upgradeDeck.setCardsCenterPosition(this.std.app.width, this.std.app.height);
       } else gameState = GameState.WAITING_PLAYER_INPUT;
     },
     onUpdate: (progress) => {
@@ -253,7 +253,7 @@ function key(std: GlyStd, key) {
       }
     }
     if (std.key.press.a) {
-      resetGame();
+      resetGame(std);
       player.addUpgrade(upgradeDeck.getSelectedUpgrade());
       gameState = GameState.WAITING_PLAYER_INPUT;
     }

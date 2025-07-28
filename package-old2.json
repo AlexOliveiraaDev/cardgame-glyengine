@@ -1,0 +1,32 @@
+{
+  "name": "CardGame",
+  "author": "AlexOliveira",
+  "version": "1.0.0",
+  "args": {
+    "core": "html5",
+    "fengari": true,
+    "enginecdn": true,
+    "videojs": true
+  },
+  "scripts": {
+    "copy-html": "gly-cli meta package.json --infile source/engine/meta/html5/index.mustache --outfile dist/index.html",
+    "copy-imgs": "mkdir dist\\cards 2>nul & copy src\\cards\\*.png dist\\cards\\",
+    "prebuild": "tstl",
+    "build": "gly-cli build-html --cwd build src/game.lua --fengari --enginecdn",
+    "build-old": "gly-cli build-html --cwd build src/game.lua --fengari --enginecdn --atob",
+    "postbuild": "npm run copy-html && npm run copy-imgs",
+    "build-love": "npm run prebuild && gly-cli build --cwd build --core love --bundler src/game.lua && npm run postbuild",
+    "start": "npx serve ./dist",
+    "dev": "concurrently \"npm run start\" \"nodemon --watch src --ext ts,json,lua --exec \\\"npm run build\\\"\""
+  },
+  "dependencies": {
+    "@gamely/gly-cli": "0.1.1",
+    "@gamely/gly-types": "^0.1.2",
+    "npm": "^11.4.1",
+    "typescript-to-lua": "^1.31.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10"
+  }
+}
