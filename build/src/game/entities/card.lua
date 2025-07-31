@@ -73,8 +73,15 @@ function Card.prototype.down(self)
     self:start({x = self.transform.position.x, y = self.transform.position.y + 50}, 0.5)
     self.isUp = false
 end
-function Card.prototype.drawCard(self, std)
-    std.image.draw("cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+function Card.prototype.drawCard(self, std, hide)
+    if hide == nil then
+        hide = false
+    end
+    if hide then
+        std.image.draw("assets/cards/Card_2.png", self.transform.position.x, self.transform.position.y)
+    else
+        std.image.draw("assets/cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+    end
 end
 function Card.prototype.damage(self, std)
     local time = 0
@@ -90,6 +97,6 @@ function Card.prototype.damage(self, std)
     self.texture = originalTexture
 end
 function Card.prototype.testDamage(self, std)
-    std.image.draw("cards/card_damage.png", self.transform.position.x, self.transform.position.y)
+    std.image.draw("assets/cards/card_damage.png", self.transform.position.x, self.transform.position.y)
 end
 return ____exports

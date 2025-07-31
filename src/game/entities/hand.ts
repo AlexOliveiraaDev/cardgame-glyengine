@@ -37,9 +37,9 @@ export class Hand {
     console.log("Generating Card...");
     return new Card(deck[Math.floor(Math.random() * deck.length)]);
   }
-  drawHandCards(std: GlyStd) {
+  drawHandCards(std: GlyStd, hide: boolean = false) {
     this.cards.forEach((card) => {
-      card.drawCard(std);
+      card.drawCard(std, hide);
     });
   }
   updateState(std: GlyStd) {

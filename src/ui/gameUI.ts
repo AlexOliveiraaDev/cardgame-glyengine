@@ -6,13 +6,8 @@ export function printCurrentGameState(std: GlyStd, gameStateText: string) {
   const x = std.app.width / 2 - gameStateText.length * 4;
   const y = 50;
 
-  // Fundo semi-transparente
-  std.draw.color(0x000000b3);
-  std.draw.rect(0, x - 10, y - 5, gameStateText.length * 8 + 20, 25);
-
-  // Texto
-  std.draw.color(0xffffffff);
-  std.text.font_size(16);
+  std.draw.color(std.color.white);
+  std.text.font_size(18);
   std.text.print(x, y, gameStateText);
 }
 
@@ -21,18 +16,17 @@ export function printPlayerPoints(std: GlyStd, player: Player) {
   const x = 20;
   const y = std.app.height - 80;
 
-  // Fundo
   std.draw.color(0x006400b3);
   std.draw.rect(0, x - 5, y - 5, text.length * 7 + 10, 20);
 
   // Texto
-  std.draw.color(0xffffffff);
+  std.draw.color(std.color.white);
   std.text.font_size(12);
   std.text.print(x, y, text);
 
   // Mostrar cartas restantes
   const cardsText = `Cartas: ${player.getHandCards().length}`;
-  std.text.print(x, y + 15, cardsText);
+  std.text.print(x, y + 25, cardsText);
 }
 
 export function printOpponentPoints(std: GlyStd, opponent: Opponent) {
@@ -45,13 +39,13 @@ export function printOpponentPoints(std: GlyStd, opponent: Opponent) {
   std.draw.rect(0, x - 5, y - 5, text.length * 7 + 10, 20);
 
   // Texto
-  std.draw.color(0xffffffff);
+  std.draw.color(std.color.white);
   std.text.font_size(12);
   std.text.print(x, y, text);
 
   // Mostrar cartas restantes
   const cardsText = `Cartas: ${opponent.hand.getAllCards().length}`;
-  std.text.print(x, y + 15, cardsText);
+  std.text.print(x, y + 25, cardsText);
 }
 
 export function printUpgradeInfo(std: GlyStd, upgrades: any[]) {

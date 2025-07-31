@@ -39,7 +39,7 @@ export class GameManager {
   private initializeGame() {
     this.player = new Player();
     this.opponent = new Opponent(GameConfig.DEFAULT_OPPONENT_DUMBNESS);
-    this.table = new Table(this.std, this.player, this.opponent);
+    this.table = new Table(this.std);
     this.upgradeManager = new UpgradeManager(this.player);
 
     // Gerar mãos iniciais
@@ -49,7 +49,7 @@ export class GameManager {
     // Posicionar cartas
     this.player.hand.setCardsPosition(this.std.app.width, this.std.app.height);
     this.opponent.setCardsPosition(this.std.app.width, this.std.app.height);
-    this.opponent.hideCards();
+    //this.opponent.hideCards();
 
     // Selecionar primeira carta do jogador
     if (this.player.hand.getAllCards().length > 0) {
@@ -65,7 +65,6 @@ export class GameManager {
 
     const selectedCard = this.player.getSelectedCard();
     this.table.setPlayerCard(selectedCard);
-    this.table.lastOpponentCard = null;
 
     this.gameState = GameState.PLAYER_TURN_ANIMATION;
     this.gameStateText = "Jogador jogou!";
@@ -81,6 +80,9 @@ export class GameManager {
       },
       onUpdate: (progress) => {},
     });
+  }
+  public cleanTable() {
+    this.table.cleanTable();
   }
 
   private handleOpponentTurn() {
@@ -119,6 +121,7 @@ export class GameManager {
     let opponentValue = opponentCard.value;
 
     console.log(`Jogador: ${playerValue} vs Oponente: ${opponentValue}`);
+    console.log("Duração do cálculo:", GameConfig.RESULT_CALCULATION_TIME);
 
     this.waitManager.addWait({
       id: "calculating_results",
@@ -142,10 +145,18 @@ export class GameManager {
           this.handleEndGame();
         } else {
           // Continuar jogo
-          setTimeout(() => {
-            this.gameState = GameState.WAITING_PLAYER_INPUT;
-            this.gameStateText = "Escolha sua carta";
-          }, GameConfig.RESULT_DISPLAY_TIME * 1000);
+          this.waitManager.addWait({
+            id: "finish_player_turn",
+            duration: 1,
+            onComplete: () => {
+              console.log("limpando mesa");
+              this.cleanTable();
+            },
+          });
+
+          console.log("timeout");
+          this.gameState = GameState.WAITING_PLAYER_INPUT;
+          this.gameStateText = "Escolha sua carta";
         }
       },
       onUpdate: (progress) => {
@@ -224,7 +235,7 @@ export class GameManager {
     // Reposicionar cartas
     this.player.hand.setCardsPosition(this.std.app.width, this.std.app.height);
     this.opponent.setCardsPosition(this.std.app.width, this.std.app.height);
-    this.opponent.hideCards();
+    //this.opponent.hideCards();
 
     // Selecionar primeira carta
     if (this.player.hand.getAllCards().length > 0) {
@@ -291,8 +302,8 @@ export class GameManager {
         break;
       default:
         this.table.renderCurrentCard();
-        this.player.hand.drawHandCards(this.std);
-        this.opponent.hand.drawHandCards(this.std);
+        this.player.hand.drawHandCards(this.std, false);
+        this.opponent.hand.drawHandCards(this.std, true);
         break;
     }
   }

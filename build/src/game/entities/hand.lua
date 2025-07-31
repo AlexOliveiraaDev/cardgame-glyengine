@@ -164,11 +164,14 @@ function Hand.prototype.getNewCard(self, deck)
         deck[math.floor(math.random() * #deck) + 1]
     )
 end
-function Hand.prototype.drawHandCards(self, std)
+function Hand.prototype.drawHandCards(self, std, hide)
+    if hide == nil then
+        hide = false
+    end
     __TS__ArrayForEach(
         self.cards,
         function(____, card)
-            card:drawCard(std)
+            card:drawCard(std, hide)
         end
     )
 end

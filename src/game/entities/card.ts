@@ -43,8 +43,12 @@ export class Card extends GameObject {
     this.isUp = false;
   }
 
-  drawCard(std: any) {
-    std.image.draw("cards/" + this.texture, this.transform.position.x, this.transform.position.y);
+  drawCard(std: any, hide: boolean = false) {
+    if (hide) {
+      std.image.draw("assets/cards/Card_2.png", this.transform.position.x, this.transform.position.y);
+    } else {
+      std.image.draw("assets/cards/" + this.texture, this.transform.position.x, this.transform.position.y);
+    }
   }
 
   damage(std: any) {
@@ -63,6 +67,6 @@ export class Card extends GameObject {
   }
 
   testDamage(std) {
-    std.image.draw("cards/card_damage.png", this.transform.position.x, this.transform.position.y);
+    std.image.draw("assets/cards/card_damage.png", this.transform.position.x, this.transform.position.y);
   }
 }

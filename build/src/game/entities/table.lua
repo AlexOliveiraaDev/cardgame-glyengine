@@ -20,7 +20,7 @@ local createCardInstance = ____CardFactory.createCardInstance
 ____exports.Table = __TS__Class()
 local Table = ____exports.Table
 Table.name = "Table"
-function Table.prototype.____constructor(self, std, player, opponent)
+function Table.prototype.____constructor(self, std)
     self.playerCardHistory = {}
     self.opponentCardHistory = {}
     self.cardWidth = 30
@@ -34,8 +34,6 @@ function Table.prototype.____constructor(self, std, player, opponent)
     self.playerCardValue = 0
     self.opponentCardValue = 0
     self.std = std
-    self.player = player
-    self.opponent = opponent
 end
 function Table.prototype.setPlayerCard(self, card)
     local instanceCard = createCardInstance(card)
@@ -45,6 +43,12 @@ function Table.prototype.setPlayerCard(self, card)
     self.lastPlayerCard:up()
     self.playerCardTexture = instanceCard.texture
 end
+function Table.prototype.cleanTable(self)
+    self.playerCardTexture = nil
+    self.lastPlayerCard = nil
+    self.opponentCardTexture = nil
+    self.lastOpponentCard = nil
+end
 function Table.prototype.setOpponentCard(self, card)
     local instanceCard = createCardInstance(card)
     local position = __TS__New(Vector2, self.std.app.width / 2 - self.cardWidth + 30, self.std.app.height / 2 - self.cardHeight - 30)
@@ -53,11 +57,11 @@ function Table.prototype.setOpponentCard(self, card)
     self.opponentCardTexture = instanceCard.texture
 end
 function Table.prototype.renderCurrentCard(self)
-    if self.lastOpponentCard then
-        self.lastOpponentCard:drawCard(self.std)
+    if self.lastOpponentCard and self.lastOpponentCard.texture then
+        self.lastOpponentCard:drawCard(self.std, false)
     end
-    if self.lastPlayerCard then
-        self.lastPlayerCard:drawCard(self.std)
+    if self.lastPlayerCard and self.lastPlayerCard.texture then
+        self.lastPlayerCard:drawCard(self.std, false)
     end
 end
 function Table.prototype.getPlayerCard(self)
@@ -88,6 +92,26 @@ function Table.prototype.applyHitOnPlayer(self, dt)
 end
 function Table.prototype.applyHitOnOpponent(self, dt)
     self.lastOpponentCard.texture = "card_damage.png"
+    if self.opponentTimer <= 1 then
+        self.opponentTimer = self.opponentTimer + dt / 100
+    else
+        self.opponentHit = false
+        self.opponentTimer = 0
+        self.lastOpponentCard.texture = self.opponentCardTexture
+    end
+end
+function Table.prototype.applyWinOnPlayer(self, dt)
+    self.lastPlayerCard.texture = "card_win.png"
+    if self.playerTimer <= 1 then
+        self.playerTimer = self.playerTimer + dt / 100
+    else
+        self.playerHit = false
+        self.playerTimer = 0
+        self.lastPlayerCard.texture = self.playerCardTexture
+    end
+end
+function Table.prototype.applyWinOnOpponent(self, dt)
+    self.lastOpponentCard.texture = "card_win.png"
     if self.opponentTimer <= 1 then
         self.opponentTimer = self.opponentTimer + dt / 100
     else

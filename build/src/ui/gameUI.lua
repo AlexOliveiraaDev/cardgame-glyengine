@@ -9,16 +9,8 @@ local ____exports = {}
 function ____exports.printCurrentGameState(std, gameStateText)
     local x = std.app.width / 2 - #gameStateText * 4
     local y = 50
-    std.draw.color(179)
-    std.draw.rect(
-        0,
-        x - 10,
-        y - 5,
-        #gameStateText * 8 + 20,
-        25
-    )
-    std.draw.color(4294967295)
-    std.text.font_size(16)
+    std.draw.color(std.color.white)
+    std.text.font_size(18)
     std.text.print(x, y, gameStateText)
 end
 function ____exports.printPlayerPoints(std, player)
@@ -33,11 +25,11 @@ function ____exports.printPlayerPoints(std, player)
         #text * 7 + 10,
         20
     )
-    std.draw.color(4294967295)
+    std.draw.color(std.color.white)
     std.text.font_size(12)
     std.text.print(x, y, text)
     local cardsText = "Cartas: " .. tostring(#player:getHandCards())
-    std.text.print(x, y + 15, cardsText)
+    std.text.print(x, y + 25, cardsText)
 end
 function ____exports.printOpponentPoints(std, opponent)
     local text = ("Opponent: " .. tostring(opponent.matchPoints)) .. " pontos"
@@ -51,11 +43,11 @@ function ____exports.printOpponentPoints(std, opponent)
         #text * 7 + 10,
         20
     )
-    std.draw.color(4294967295)
+    std.draw.color(std.color.white)
     std.text.font_size(12)
     std.text.print(x, y, text)
     local cardsText = "Cartas: " .. tostring(#opponent.hand:getAllCards())
-    std.text.print(x, y + 15, cardsText)
+    std.text.print(x, y + 25, cardsText)
 end
 function ____exports.printUpgradeInfo(std, upgrades)
     if #upgrades == 0 then

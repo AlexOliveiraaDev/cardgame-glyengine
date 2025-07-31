@@ -271,6 +271,7 @@ local ____GameConfig = require("src.game.config.GameConfig")
 local GameConfig = ____GameConfig.GameConfig
 local gameManager
 local pressed = false
+local doOnce = false
 ____exports.meta = {title = "Card Game", author = "", version = "1.0.0", description = ""}
 local function init(std, game)
     print("Initializing game...")
@@ -287,7 +288,10 @@ local function loop(std, game)
     end)
 end
 local function draw(std, game)
-    std.draw.clear(std.color.black)
+    if not doOnce then
+        doOnce = true
+        std.media.video():src("assets/bg.mp4"):play():resize(std.app.width, std.app.height)
+    end
     std.draw.color(std.color.white)
     std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL)
     std.text.font_name(GameConfig.UI_FONT_NAME)

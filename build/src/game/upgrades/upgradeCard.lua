@@ -72,6 +72,6 @@ function UpgradeCard.prototype.down(self)
     self.isUp = false
 end
 function UpgradeCard.prototype.drawCard(self, std)
-    std.image.draw("cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+    std.image.draw("assets/cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
 end
 return ____exports

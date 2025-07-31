@@ -37,6 +37,6 @@ export class UpgradeCard extends GameObject {
   }
 
   drawCard(std: any) {
-    std.image.draw("cards/" + this.texture, this.transform.position.x, this.transform.position.y);
+    std.image.draw("assets/cards/" + this.texture, this.transform.position.x, this.transform.position.y);
   }
 }

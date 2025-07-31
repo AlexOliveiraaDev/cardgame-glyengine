@@ -16,6 +16,7 @@ import { GameConfig } from "./game/config/GameConfig";
 
 let gameManager: GameManager;
 let pressed = false;
+let doOnce = false;
 
 export const meta = {
   title: "Card Game",
@@ -40,7 +41,10 @@ async function loop(std: GlyStd, game: any) {
 }
 
 function draw(std: GlyStd, game: any) {
-  std.draw.clear(std.color.black);
+  if (!doOnce) {
+    doOnce = true;
+    std.media.video().src("assets/bg.mp4").play().resize(std.app.width, std.app.height);
+  }
   std.draw.color(std.color.white);
   std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL);
   std.text.font_name(GameConfig.UI_FONT_NAME);

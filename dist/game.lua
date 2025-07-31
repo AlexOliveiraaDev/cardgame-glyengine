@@ -1,23 +1,23 @@
-local game_src_ui_gameUI_1c5d50 = nil
-local game_src_game_managers_GameManager_1b6858 = nil
-local game_src_game_config_GameConfig_1c70c0 = nil
-local game_src_game_entities_table_210ff0 = nil
-local game_src_game_entities_Player_1c7808 = nil
-local game_src_game_entities_Opponent_1d8c20 = nil
-local game_src_game_upgrades_UpgradeManager_1d8898 = nil
-local game_src_core_utils_waitManager_1d3a98 = nil
-local game_src_game_data_CardDefinitions_26abf8 = nil
-local game_src_core_spatial_vector2_1c3ea8 = nil
-local game_src_game_utils_CardFactory_1cba90 = nil
-local game_src_game_entities_hand_1c6378 = nil
-local game_src_game_upgrades_upgradeDeck_1d8bb0 = nil
-local game_src_game_data_UpgradeDefinitions_10c760 = nil
-local game_src_game_entities_card_1d3ba8 = nil
-local game_src_game_upgrades_upgradeCard_1a75d8 = nil
-local game_src_game_entities_gameObject_1bd220 = nil
-local game_src_core_spatial_transform_1cba68 = nil
-local game_src_core_animation_animationController_1d53b0 = nil
-local function main_1e5fa0()
+local game_src_ui_gameUI_1c75e8 = nil
+local game_src_game_managers_GameManager_1c6640 = nil
+local game_src_game_config_GameConfig_245088 = nil
+local game_src_game_entities_table_2be930 = nil
+local game_src_game_entities_Player_245060 = nil
+local game_src_game_entities_Opponent_200c00 = nil
+local game_src_game_upgrades_UpgradeManager_247530 = nil
+local game_src_core_utils_waitManager_2c66a8 = nil
+local game_src_game_data_CardDefinitions_2bf0c8 = nil
+local game_src_core_spatial_vector2_1ca1f8 = nil
+local game_src_game_utils_CardFactory_1cc968 = nil
+local game_src_game_entities_hand_1a20e8 = nil
+local game_src_game_upgrades_upgradeDeck_196ac8 = nil
+local game_src_game_data_UpgradeDefinitions_1cb130 = nil
+local game_src_game_entities_card_1be060 = nil
+local game_src_game_upgrades_upgradeCard_1ca400 = nil
+local game_src_game_entities_gameObject_1ca150 = nil
+local game_src_core_spatial_transform_1c7b88 = nil
+local game_src_core_animation_animationController_1c3880 = nil
+local function main_28aea8()
 local function __TS__New(target, ...)
 local instance = setmetatable({}, target.prototype)
 instance:____constructor(...)
@@ -271,18 +271,19 @@ end
 return result
 end
 local ____exports = {}
-local ____gameUI = game_src_ui_gameUI_1c5d50()
+local ____gameUI = game_src_ui_gameUI_1c75e8()
 local printCurrentGameState = ____gameUI.printCurrentGameState
 local printOpponentPoints = ____gameUI.printOpponentPoints
 local printPlayerPoints = ____gameUI.printPlayerPoints
 local printControls = ____gameUI.printControls
 local printUpgradeInfo = ____gameUI.printUpgradeInfo
-local ____GameManager = game_src_game_managers_GameManager_1b6858()
+local ____GameManager = game_src_game_managers_GameManager_1c6640()
 local GameManager = ____GameManager.GameManager
-local ____GameConfig = game_src_game_config_GameConfig_1c70c0()
+local ____GameConfig = game_src_game_config_GameConfig_245088()
 local GameConfig = ____GameConfig.GameConfig
 local gameManager
 local pressed = false
+local doOnce = false
 ____exports.meta = {title = "Card Game", author = "", version = "1.0.0", description = ""}
 local function init(std, game)
 print("Initializing game...")
@@ -299,7 +300,10 @@ gameManager:update(std.delta)
 end)
 end
 local function draw(std, game)
-std.draw.clear(std.color.black)
+if not doOnce then
+doOnce = true
+std.media.video():src("assets/bg.mp4"):play():resize(std.app.width, std.app.height)
+end
 std.draw.color(std.color.white)
 std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL)
 std.text.font_name(GameConfig.UI_FONT_NAME)
@@ -391,7 +395,7 @@ key = key
 }
 return ____exports
 end
-game_src_ui_gameUI_1c5d50 = function()
+game_src_ui_gameUI_1c75e8 = function()
 local function __TS__ArrayForEach(self, callbackFn, thisArg)
 for i = 1, #self do
 callbackFn(thisArg, self[i], i - 1, self)
@@ -401,16 +405,8 @@ local ____exports = {}
 function ____exports.printCurrentGameState(std, gameStateText)
 local x = std.app.width / 2 - #gameStateText * 4
 local y = 50
-std.draw.color(179)
-std.draw.rect(
-0,
-x - 10,
-y - 5,
-#gameStateText * 8 + 20,
-25
-)
-std.draw.color(4294967295)
-std.text.font_size(16)
+std.draw.color(std.color.white)
+std.text.font_size(18)
 std.text.print(x, y, gameStateText)
 end
 function ____exports.printPlayerPoints(std, player)
@@ -425,11 +421,11 @@ y - 5,
 #text * 7 + 10,
 20
 )
-std.draw.color(4294967295)
+std.draw.color(std.color.white)
 std.text.font_size(12)
 std.text.print(x, y, text)
 local cardsText = "Cartas: " .. tostring(#player:getHandCards())
-std.text.print(x, y + 15, cardsText)
+std.text.print(x, y + 25, cardsText)
 end
 function ____exports.printOpponentPoints(std, opponent)
 local text = ("Opponent: " .. tostring(opponent.matchPoints)) .. " pontos"
@@ -443,11 +439,11 @@ y - 5,
 #text * 7 + 10,
 20
 )
-std.draw.color(4294967295)
+std.draw.color(std.color.white)
 std.text.font_size(12)
 std.text.print(x, y, text)
 local cardsText = "Cartas: " .. tostring(#opponent.hand:getAllCards())
-std.text.print(x, y + 15, cardsText)
+std.text.print(x, y + 25, cardsText)
 end
 function ____exports.printUpgradeInfo(std, upgrades)
 if #upgrades == 0 then
@@ -521,7 +517,7 @@ end
 return ____exports
 end
 --
-game_src_game_managers_GameManager_1b6858 = function()
+game_src_game_managers_GameManager_1c6640 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -570,19 +566,19 @@ return result
 end
 end
 local ____exports = {}
-local ____table = game_src_game_entities_table_210ff0()
+local ____table = game_src_game_entities_table_2be930()
 local Table = ____table.Table
-local ____Player = game_src_game_entities_Player_1c7808()
+local ____Player = game_src_game_entities_Player_245060()
 local Player = ____Player.Player
-local ____Opponent = game_src_game_entities_Opponent_1d8c20()
+local ____Opponent = game_src_game_entities_Opponent_200c00()
 local Opponent = ____Opponent.Opponent
-local ____UpgradeManager = game_src_game_upgrades_UpgradeManager_1d8898()
+local ____UpgradeManager = game_src_game_upgrades_UpgradeManager_247530()
 local UpgradeManager = ____UpgradeManager.UpgradeManager
-local ____waitManager = game_src_core_utils_waitManager_1d3a98()
+local ____waitManager = game_src_core_utils_waitManager_2c66a8()
 local WaitManager = ____waitManager.WaitManager
-local ____CardDefinitions = game_src_game_data_CardDefinitions_26abf8()
+local ____CardDefinitions = game_src_game_data_CardDefinitions_2bf0c8()
 local CARD_LIST = ____CardDefinitions.CARD_LIST
-local ____GameConfig = game_src_game_config_GameConfig_1c70c0()
+local ____GameConfig = game_src_game_config_GameConfig_245088()
 local GameConfig = ____GameConfig.GameConfig
 ____exports.GameState = GameState or ({})
 ____exports.GameState.WAITING_PLAYER_INPUT = "WAITING_PLAYER_INPUT"
@@ -605,13 +601,12 @@ end
 function GameManager.prototype.initializeGame(self)
 self.player = __TS__New(Player)
 self.opponent = __TS__New(Opponent, GameConfig.DEFAULT_OPPONENT_DUMBNESS)
-self.table = __TS__New(Table, self.std, self.player, self.opponent)
+self.table = __TS__New(Table, self.std)
 self.upgradeManager = __TS__New(UpgradeManager, self.player)
 self.player.hand:generateNewHand(CARD_LIST)
 self.opponent:generateNewHand(CARD_LIST)
 self.player.hand:setCardsPosition(self.std.app.width, self.std.app.height)
 self.opponent:setCardsPosition(self.std.app.width, self.std.app.height)
-self.opponent:hideCards()
 if #self.player.hand:getAllCards() > 0 then
 self.player.hand:getAllCards()[1]:up()
 end
@@ -624,7 +619,6 @@ return
 end
 local selectedCard = self.player:getSelectedCard()
 self.table:setPlayerCard(selectedCard)
-self.table.lastOpponentCard = nil
 self.gameState = ____exports.GameState.PLAYER_TURN_ANIMATION
 self.gameStateText = "Jogador jogou!"
 self.waitManager:addWait({
@@ -639,6 +633,9 @@ end,
 onUpdate = function(____, progress)
 end
 })
+end
+function GameManager.prototype.cleanTable(self)
+self.table:cleanTable()
 end
 function GameManager.prototype.handleOpponentTurn(self)
 if self.gameState ~= ____exports.GameState.WAITING_ENEMY_TURN then
@@ -672,6 +669,7 @@ local opponentCard = self.table:getOpponentCard()
 local playerValue = self:calculateCardValue(playerCard, self.player)
 local opponentValue = opponentCard.value
 print((("Jogador: " .. tostring(playerValue)) .. " vs Oponente: ") .. tostring(opponentValue))
+print("Duração do cálculo:", GameConfig.RESULT_CALCULATION_TIME)
 self.waitManager:addWait({
 id = "calculating_results",
 duration = GameConfig.RESULT_CALCULATION_TIME,
@@ -692,14 +690,17 @@ end
 if #self.player:getHandCards() == 0 then
 self:handleEndGame()
 else
-setTimeout(
-_G,
-function()
+self.waitManager:addWait({
+id = "finish_player_turn",
+duration = 1,
+onComplete = function()
+print("limpando mesa")
+self:cleanTable()
+end
+})
+print("timeout")
 self.gameState = ____exports.GameState.WAITING_PLAYER_INPUT
 self.gameStateText = "Escolha sua carta"
-end,
-GameConfig.RESULT_DISPLAY_TIME * 1000
-)
 end
 end,
 onUpdate = function(____, progress)
@@ -712,9 +713,9 @@ local value = card.value
 local upgrades = player:getUpgrades()
 for ____, upgrade in ipairs(upgrades) do
 repeat
-local ____switch25 = upgrade.special_effect
-local ____cond25 = ____switch25 == 1
-if ____cond25 then
+local ____switch26 = upgrade.special_effect
+local ____cond26 = ____switch26 == 1
+if ____cond26 then
 value = self:applyComboNaipes(
 player:getCardHistory(),
 value
@@ -773,7 +774,6 @@ self.player.hand:generateNewHand(CARD_LIST)
 self.opponent:generateNewHand(CARD_LIST)
 self.player.hand:setCardsPosition(self.std.app.width, self.std.app.height)
 self.opponent:setCardsPosition(self.std.app.width, self.std.app.height)
-self.opponent:hideCards()
 if #self.player.hand:getAllCards() > 0 then
 self.player.hand:getAllCards()[1]:up()
 end
@@ -786,19 +786,19 @@ return
 end
 if self.gameState == ____exports.GameState.WAITING_PLAYER_INPUT then
 repeat
-local ____switch42 = key
-local ____cond42 = ____switch42 == "left"
-if ____cond42 then
+local ____switch43 = key
+local ____cond43 = ____switch43 == "left"
+if ____cond43 then
 self.player.hand:switchActiveCard(false)
 break
 end
-____cond42 = ____cond42 or ____switch42 == "right"
-if ____cond42 then
+____cond43 = ____cond43 or ____switch43 == "right"
+if ____cond43 then
 self.player.hand:switchActiveCard(true)
 break
 end
-____cond42 = ____cond42 or ____switch42 == "action"
-if ____cond42 then
+____cond43 = ____cond43 or ____switch43 == "action"
+if ____cond43 then
 self:handlePlayerCardSelection()
 break
 end
@@ -806,19 +806,19 @@ until true
 end
 if self.gameState == ____exports.GameState.CHOOSING_UPGRADE then
 repeat
-local ____switch44 = key
-local ____cond44 = ____switch44 == "left"
-if ____cond44 then
+local ____switch45 = key
+local ____cond45 = ____switch45 == "left"
+if ____cond45 then
 self.upgradeManager:switchActiveCard(false)
 break
 end
-____cond44 = ____cond44 or ____switch44 == "right"
-if ____cond44 then
+____cond45 = ____cond45 or ____switch45 == "right"
+if ____cond45 then
 self.upgradeManager:switchActiveCard(true)
 break
 end
-____cond44 = ____cond44 or ____switch44 == "action"
-if ____cond44 then
+____cond45 = ____cond45 or ____switch45 == "action"
+if ____cond45 then
 self:handleUpgradeSelection()
 break
 end
@@ -839,16 +839,16 @@ self.std.text.print(self.std.app.width / 2 - 100, self.std.app.height / 2 - 25, 
 return
 end
 repeat
-local ____switch48 = self.gameState
-local ____cond48 = ____switch48 == ____exports.GameState.CHOOSING_UPGRADE
-if ____cond48 then
+local ____switch49 = self.gameState
+local ____cond49 = ____switch49 == ____exports.GameState.CHOOSING_UPGRADE
+if ____cond49 then
 self.upgradeManager:drawHandCards(self.std)
 break
 end
 do
 self.table:renderCurrentCard()
-self.player.hand:drawHandCards(self.std)
-self.opponent.hand:drawHandCards(self.std)
+self.player.hand:drawHandCards(self.std, false)
+self.opponent.hand:drawHandCards(self.std, true)
 break
 end
 until true
@@ -868,7 +868,7 @@ end
 return ____exports
 end
 --
-game_src_game_config_GameConfig_1c70c0 = function()
+game_src_game_config_GameConfig_245088 = function()
 local ____exports = {}
 ____exports.GameConfig = {
 HAND_SIZE = 5,
@@ -935,7 +935,7 @@ LOG_UPGRADE_EFFECTS = true
 return ____exports
 end
 --
-game_src_game_entities_table_210ff0 = function()
+game_src_game_entities_table_2be930 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -948,14 +948,14 @@ instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____CardFactory = game_src_game_utils_CardFactory_1cba90()
+local ____CardFactory = game_src_game_utils_CardFactory_1cc968()
 local createCardInstance = ____CardFactory.createCardInstance
 ____exports.Table = __TS__Class()
 local Table = ____exports.Table
 Table.name = "Table"
-function Table.prototype.____constructor(self, std, player, opponent)
+function Table.prototype.____constructor(self, std)
 self.playerCardHistory = {}
 self.opponentCardHistory = {}
 self.cardWidth = 30
@@ -969,8 +969,6 @@ self.opponentCardTexture = ""
 self.playerCardValue = 0
 self.opponentCardValue = 0
 self.std = std
-self.player = player
-self.opponent = opponent
 end
 function Table.prototype.setPlayerCard(self, card)
 local instanceCard = createCardInstance(card)
@@ -980,6 +978,12 @@ self.lastPlayerCard = instanceCard
 self.lastPlayerCard:up()
 self.playerCardTexture = instanceCard.texture
 end
+function Table.prototype.cleanTable(self)
+self.playerCardTexture = nil
+self.lastPlayerCard = nil
+self.opponentCardTexture = nil
+self.lastOpponentCard = nil
+end
 function Table.prototype.setOpponentCard(self, card)
 local instanceCard = createCardInstance(card)
 local position = __TS__New(Vector2, self.std.app.width / 2 - self.cardWidth + 30, self.std.app.height / 2 - self.cardHeight - 30)
@@ -988,11 +992,11 @@ self.lastOpponentCard = instanceCard
 self.opponentCardTexture = instanceCard.texture
 end
 function Table.prototype.renderCurrentCard(self)
-if self.lastOpponentCard then
-self.lastOpponentCard:drawCard(self.std)
+if self.lastOpponentCard and self.lastOpponentCard.texture then
+self.lastOpponentCard:drawCard(self.std, false)
 end
-if self.lastPlayerCard then
-self.lastPlayerCard:drawCard(self.std)
+if self.lastPlayerCard and self.lastPlayerCard.texture then
+self.lastPlayerCard:drawCard(self.std, false)
 end
 end
 function Table.prototype.getPlayerCard(self)
@@ -1031,6 +1035,26 @@ self.opponentTimer = 0
 self.lastOpponentCard.texture = self.opponentCardTexture
 end
 end
+function Table.prototype.applyWinOnPlayer(self, dt)
+self.lastPlayerCard.texture = "card_win.png"
+if self.playerTimer <= 1 then
+self.playerTimer = self.playerTimer + dt / 100
+else
+self.playerHit = false
+self.playerTimer = 0
+self.lastPlayerCard.texture = self.playerCardTexture
+end
+end
+function Table.prototype.applyWinOnOpponent(self, dt)
+self.lastOpponentCard.texture = "card_win.png"
+if self.opponentTimer <= 1 then
+self.opponentTimer = self.opponentTimer + dt / 100
+else
+self.opponentHit = false
+self.opponentTimer = 0
+self.lastOpponentCard.texture = self.opponentCardTexture
+end
+end
 function Table.prototype.tick(self, dt)
 if self.playerHit then
 self:applyHitOnPlayer(dt)
@@ -1042,7 +1066,7 @@ end
 return ____exports
 end
 --
-game_src_game_entities_Player_1c7808 = function()
+game_src_game_entities_Player_245060 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -1186,7 +1210,7 @@ end
 return #self
 end
 local ____exports = {}
-local ____hand = game_src_game_entities_hand_1c6378()
+local ____hand = game_src_game_entities_hand_1a20e8()
 local Hand = ____hand.Hand
 ____exports.Player = __TS__Class()
 local Player = ____exports.Player
@@ -1246,7 +1270,7 @@ end
 return ____exports
 end
 --
-game_src_game_entities_Opponent_1d8c20 = function()
+game_src_game_entities_Opponent_200c00 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -1417,9 +1441,9 @@ callbackFn(thisArg, self[i], i - 1, self)
 end
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____hand = game_src_game_entities_hand_1c6378()
+local ____hand = game_src_game_entities_hand_1a20e8()
 local Hand = ____hand.Hand
 ____exports.Opponent = __TS__Class()
 local Opponent = ____exports.Opponent
@@ -1580,7 +1604,7 @@ end
 return ____exports
 end
 --
-game_src_game_upgrades_UpgradeManager_1d8898 = function()
+game_src_game_upgrades_UpgradeManager_247530 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -1598,11 +1622,11 @@ callbackFn(thisArg, self[i], i - 1, self)
 end
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____upgradeDeck = game_src_game_upgrades_upgradeDeck_1d8bb0()
+local ____upgradeDeck = game_src_game_upgrades_upgradeDeck_196ac8()
 local UpgradeDeck = ____upgradeDeck.UpgradeDeck
-local ____UpgradeDefinitions = game_src_game_data_UpgradeDefinitions_10c760()
+local ____UpgradeDefinitions = game_src_game_data_UpgradeDefinitions_1cb130()
 local UPGRADE_CARD_LIST = ____UpgradeDefinitions.UPGRADE_CARD_LIST
 ____exports.UpgradeManager = __TS__Class()
 local UpgradeManager = ____exports.UpgradeManager
@@ -1695,7 +1719,7 @@ end
 return ____exports
 end
 --
-game_src_core_utils_waitManager_1d3a98 = function()
+game_src_core_utils_waitManager_2c66a8 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -1895,7 +1919,7 @@ end
 return ____exports
 end
 --
-game_src_game_data_CardDefinitions_26abf8 = function()
+game_src_game_data_CardDefinitions_2bf0c8 = function()
 local ____exports = {}
 ____exports.CARD_LIST = {
 {
@@ -2334,7 +2358,7 @@ special_effect = 5
 return ____exports
 end
 --
-game_src_core_spatial_vector2_1c3ea8 = function()
+game_src_core_spatial_vector2_1ca1f8 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2352,14 +2376,14 @@ end
 return ____exports
 end
 --
-game_src_game_utils_CardFactory_1cba90 = function()
+game_src_game_utils_CardFactory_1cc968 = function()
 local function __TS__New(target, ...)
 local instance = setmetatable({}, target.prototype)
 instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____card = game_src_game_entities_card_1d3ba8()
+local ____card = game_src_game_entities_card_1be060()
 local Card = ____card.Card
 function ____exports.createCardInstance(card)
 local cardInfo = {
@@ -2375,7 +2399,7 @@ end
 return ____exports
 end
 --
-game_src_game_entities_hand_1c6378 = function()
+game_src_game_entities_hand_1a20e8 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2477,9 +2501,9 @@ end
 return out
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____card = game_src_game_entities_card_1d3ba8()
+local ____card = game_src_game_entities_card_1be060()
 local Card = ____card.Card
 ____exports.Hand = __TS__Class()
 local Hand = ____exports.Hand
@@ -2535,11 +2559,14 @@ Card,
 deck[math.floor(math.random() * #deck) + 1]
 )
 end
-function Hand.prototype.drawHandCards(self, std)
+function Hand.prototype.drawHandCards(self, std, hide)
+if hide == nil then
+hide = false
+end
 __TS__ArrayForEach(
 self.cards,
 function(____, card)
-card:drawCard(std)
+card:drawCard(std, hide)
 end
 )
 end
@@ -2629,7 +2656,7 @@ end
 return ____exports
 end
 --
-game_src_game_upgrades_upgradeDeck_1d8bb0 = function()
+game_src_game_upgrades_upgradeDeck_196ac8 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2642,7 +2669,7 @@ instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____upgradeCard = game_src_game_upgrades_upgradeCard_1a75d8()
+local ____upgradeCard = game_src_game_upgrades_upgradeCard_1ca400()
 local UpgradeCard = ____upgradeCard.UpgradeCard
 ____exports.UpgradeDeck = __TS__Class()
 local UpgradeDeck = ____exports.UpgradeDeck
@@ -2703,7 +2730,7 @@ end
 return ____exports
 end
 --
-game_src_game_data_UpgradeDefinitions_10c760 = function()
+game_src_game_data_UpgradeDefinitions_1cb130 = function()
 local ____exports = {}
 ____exports.UPGRADE_CARD_LIST = {
 {id = "combo_naipes", name = "Combo de Naipe", texture = "card1.png", special_effect = 1},
@@ -2722,7 +2749,7 @@ ____exports.UPGRADE_CARD_LIST = {
 return ____exports
 end
 --
-game_src_game_entities_card_1d3ba8 = function()
+game_src_game_entities_card_1be060 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2759,9 +2786,9 @@ instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____gameObject = game_src_game_entities_gameObject_1bd220()
+local ____gameObject = game_src_game_entities_gameObject_1ca150()
 local GameObject = ____gameObject.GameObject
 ____exports.Card = __TS__Class()
 local Card = ____exports.Card
@@ -2794,8 +2821,15 @@ print("card down")
 self:start({x = self.transform.position.x, y = self.transform.position.y + 50}, 0.5)
 self.isUp = false
 end
-function Card.prototype.drawCard(self, std)
-std.image.draw("cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+function Card.prototype.drawCard(self, std, hide)
+if hide == nil then
+hide = false
+end
+if hide then
+std.image.draw("assets/cards/Card_2.png", self.transform.position.x, self.transform.position.y)
+else
+std.image.draw("assets/cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+end
 end
 function Card.prototype.damage(self, std)
 local time = 0
@@ -2811,12 +2845,12 @@ print("finished damage")
 self.texture = originalTexture
 end
 function Card.prototype.testDamage(self, std)
-std.image.draw("cards/card_damage.png", self.transform.position.x, self.transform.position.y)
+std.image.draw("assets/cards/card_damage.png", self.transform.position.x, self.transform.position.y)
 end
 return ____exports
 end
 --
-game_src_game_upgrades_upgradeCard_1a75d8 = function()
+game_src_game_upgrades_upgradeCard_1ca400 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2853,9 +2887,9 @@ instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____vector2 = game_src_core_spatial_vector2_1c3ea8()
+local ____vector2 = game_src_core_spatial_vector2_1ca1f8()
 local Vector2 = ____vector2.Vector2
-local ____gameObject = game_src_game_entities_gameObject_1bd220()
+local ____gameObject = game_src_game_entities_gameObject_1ca150()
 local GameObject = ____gameObject.GameObject
 ____exports.UpgradeCard = __TS__Class()
 local UpgradeCard = ____exports.UpgradeCard
@@ -2887,12 +2921,12 @@ self:start({x = self.transform.position.x, y = self.transform.position.y + 50}, 
 self.isUp = false
 end
 function UpgradeCard.prototype.drawCard(self, std)
-std.image.draw("cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
+std.image.draw("assets/cards/" .. self.texture, self.transform.position.x, self.transform.position.y)
 end
 return ____exports
 end
 --
-game_src_game_entities_gameObject_1bd220 = function()
+game_src_game_entities_gameObject_1ca150 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2905,9 +2939,9 @@ instance:____constructor(...)
 return instance
 end
 local ____exports = {}
-local ____transform = game_src_core_spatial_transform_1cba68()
+local ____transform = game_src_core_spatial_transform_1c7b88()
 local Transform = ____transform.Transform
-local ____animationController = game_src_core_animation_animationController_1d53b0()
+local ____animationController = game_src_core_animation_animationController_1c3880()
 local AnimationController = ____animationController.AnimationController
 ____exports.GameObject = __TS__Class()
 local GameObject = ____exports.GameObject
@@ -2934,7 +2968,7 @@ end
 return ____exports
 end
 --
-game_src_core_spatial_transform_1cba68 = function()
+game_src_core_spatial_transform_1c7b88 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2952,7 +2986,7 @@ end
 return ____exports
 end
 --
-game_src_core_animation_animationController_1d53b0 = function()
+game_src_core_animation_animationController_1c3880 = function()
 local function __TS__Class(self)
 local c = {prototype = {}}
 c.prototype.__index = c.prototype
@@ -2996,4 +3030,4 @@ end
 return ____exports
 end
 --
-return main_1e5fa0()
+return main_28aea8()

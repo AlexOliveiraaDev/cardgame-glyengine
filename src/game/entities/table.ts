@@ -28,10 +28,8 @@ export class Table {
   playerCardValue: number = 0;
   opponentCardValue: number = 0;
 
-  constructor(std: GlyStd, player: Player, opponent: Opponent) {
+  constructor(std: GlyStd) {
     this.std = std;
-    this.player = player;
-    this.opponent = opponent;
   }
 
   setPlayerCard(card: Card) {
@@ -46,6 +44,13 @@ export class Table {
     this.playerCardTexture = instanceCard.texture;
   }
 
+  cleanTable() {
+    this.playerCardTexture = null;
+    this.lastPlayerCard = null;
+    this.opponentCardTexture = null;
+    this.lastOpponentCard = null;
+  }
+
   setOpponentCard(card: Card) {
     const instanceCard = createCardInstance(card);
     const position = new Vector2(
@@ -58,11 +63,11 @@ export class Table {
   }
 
   renderCurrentCard() {
-    if (this.lastOpponentCard) {
-      this.lastOpponentCard.drawCard(this.std);
+    if (this.lastOpponentCard && this.lastOpponentCard.texture) {
+      this.lastOpponentCard.drawCard(this.std, false);
     }
-    if (this.lastPlayerCard) {
-      this.lastPlayerCard.drawCard(this.std);
+    if (this.lastPlayerCard && this.lastPlayerCard.texture) {
+      this.lastPlayerCard.drawCard(this.std, false);
     }
   }
 
@@ -104,13 +109,37 @@ export class Table {
     }
   }
 
+  applyWinOnPlayer(dt: number) {
+    this.lastPlayerCard.texture = "card_win.png";
+    if (this.playerTimer <= 1) {
+      this.playerTimer += dt / 100;
+    } else {
+      this.playerHit = false;
+      this.playerTimer = 0;
+      this.lastPlayerCard.texture = this.playerCardTexture;
+    }
+  }
+
+  applyWinOnOpponent(dt: number) {
+    this.lastOpponentCard.texture = "card_win.png";
+    if (this.opponentTimer <= 1) {
+      this.opponentTimer += dt / 100;
+    } else {
+      this.opponentHit = false;
+      this.opponentTimer = 0;
+      this.lastOpponentCard.texture = this.opponentCardTexture;
+    }
+  }
+
   tick(dt) {
     if (this.playerHit) {
       this.applyHitOnPlayer(dt);
+      //this.applyWinOnOpponent(dt);
     }
 
     if (this.opponentHit) {
       this.applyHitOnOpponent(dt);
+      //this.applyWinOnPlayer(dt);
     }
   }
 }
