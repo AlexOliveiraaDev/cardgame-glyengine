@@ -1,12 +1,13 @@
 import { GlyStd } from "@gamely/gly-types";
 import { Vector2 } from "../../core/spatial/vector2";
 import { Card, CardDefinition } from "./card";
+import { GameConfig } from "../config/GameConfig";
 
 export class Hand {
   cards: Card[] = [];
   upgrades: Card[] = [];
   selectedCard = 0;
-  cardsQuantity = 5;
+  cardsQuantity = GameConfig.HAND_SIZE;
   generateNewHand(deck: CardDefinition[]) {
     console.log("# Generating New Hand #");
     let newCard: Card = undefined;

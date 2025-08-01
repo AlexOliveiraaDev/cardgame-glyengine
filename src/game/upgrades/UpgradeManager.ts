@@ -9,7 +9,7 @@ export class UpgradeManager {
   private player: Player;
   private upgradeDeck: UpgradeDeck;
   private upgrades: UpgradeCard[];
-  UPGRADE_QUANTITY = 4;
+  UPGRADE_QUANTITY = 2;
 
   constructor(player: Player) {
     this.player = player;

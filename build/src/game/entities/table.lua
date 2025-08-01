@@ -21,8 +21,6 @@ ____exports.Table = __TS__Class()
 local Table = ____exports.Table
 Table.name = "Table"
 function Table.prototype.____constructor(self, std)
-    self.playerCardHistory = {}
-    self.opponentCardHistory = {}
     self.cardWidth = 30
     self.cardHeight = 120
     self.playerHit = false

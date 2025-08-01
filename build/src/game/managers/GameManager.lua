@@ -83,18 +83,13 @@ function GameManager.prototype.____constructor(self, std)
     self:initializeGame()
 end
 function GameManager.prototype.initializeGame(self)
+    print("intializing game")
     self.player = __TS__New(Player)
     self.opponent = __TS__New(Opponent, GameConfig.DEFAULT_OPPONENT_DUMBNESS)
     self.table = __TS__New(Table, self.std)
     self.upgradeManager = __TS__New(UpgradeManager, self.player)
-    self.player.hand:generateNewHand(CARD_LIST)
-    self.opponent:generateNewHand(CARD_LIST)
-    self.player.hand:setCardsPosition(self.std.app.width, self.std.app.height)
-    self.opponent:setCardsPosition(self.std.app.width, self.std.app.height)
-    if #self.player.hand:getAllCards() > 0 then
-        self.player.hand:getAllCards()[1]:up()
-    end
-    self.gameState = ____exports.GameState.WAITING_PLAYER_INPUT
+    self.gameState = ____exports.GameState.CHOOSING_UPGRADE
+    self.upgradeManager:setCardsCenterPosition(self.std.app.width, self.std.app.height)
     self.gameStateText = "Escolha sua carta"
 end
 function GameManager.prototype.handlePlayerCardSelection(self)
@@ -196,18 +191,11 @@ function GameManager.prototype.calculateCardValue(self, card, player)
     local value = card.value
     local upgrades = player:getUpgrades()
     for ____, upgrade in ipairs(upgrades) do
-        repeat
-            local ____switch26 = upgrade.special_effect
-            local ____cond26 = ____switch26 == 1
-            if ____cond26 then
-                value = self:applyComboNaipes(
-                    player:getCardHistory(),
-                    value
-                )
-                break
-            end
-        until true
     end
+    value = self:applyComboNaipes(
+        player:getCardHistory(),
+        value
+    )
     return value
 end
 function GameManager.prototype.applyComboNaipes(self, cardHistory, value)
@@ -227,6 +215,7 @@ function GameManager.prototype.applyComboNaipes(self, cardHistory, value)
         end
     end
     if count >= 3 then
+        print("aplicando dobro do valor")
         return value * 2
     end
     return value
@@ -252,6 +241,7 @@ function GameManager.prototype.handleUpgradeSelection(self)
     self.gameStateText = "Escolha sua carta"
 end
 function GameManager.prototype.resetGame(self)
+    print("reseting game")
     self.player.matchPoints = 0
     self.opponent.matchPoints = 0
     self.player.hand:generateNewHand(CARD_LIST)
@@ -270,19 +260,19 @@ function GameManager.prototype.handleInput(self, key)
     end
     if self.gameState == ____exports.GameState.WAITING_PLAYER_INPUT then
         repeat
-            local ____switch43 = key
-            local ____cond43 = ____switch43 == "left"
-            if ____cond43 then
+            local ____switch41 = key
+            local ____cond41 = ____switch41 == "left"
+            if ____cond41 then
                 self.player.hand:switchActiveCard(false)
                 break
             end
-            ____cond43 = ____cond43 or ____switch43 == "right"
-            if ____cond43 then
+            ____cond41 = ____cond41 or ____switch41 == "right"
+            if ____cond41 then
                 self.player.hand:switchActiveCard(true)
                 break
             end
-            ____cond43 = ____cond43 or ____switch43 == "action"
-            if ____cond43 then
+            ____cond41 = ____cond41 or ____switch41 == "action"
+            if ____cond41 then
                 self:handlePlayerCardSelection()
                 break
             end
@@ -290,19 +280,19 @@ function GameManager.prototype.handleInput(self, key)
     end
     if self.gameState == ____exports.GameState.CHOOSING_UPGRADE then
         repeat
-            local ____switch45 = key
-            local ____cond45 = ____switch45 == "left"
-            if ____cond45 then
+            local ____switch43 = key
+            local ____cond43 = ____switch43 == "left"
+            if ____cond43 then
                 self.upgradeManager:switchActiveCard(false)
                 break
             end
-            ____cond45 = ____cond45 or ____switch45 == "right"
-            if ____cond45 then
+            ____cond43 = ____cond43 or ____switch43 == "right"
+            if ____cond43 then
                 self.upgradeManager:switchActiveCard(true)
                 break
             end
-            ____cond45 = ____cond45 or ____switch45 == "action"
-            if ____cond45 then
+            ____cond43 = ____cond43 or ____switch43 == "action"
+            if ____cond43 then
                 self:handleUpgradeSelection()
                 break
             end
@@ -323,9 +313,9 @@ function GameManager.prototype.render(self)
         return
     end
     repeat
-        local ____switch49 = self.gameState
-        local ____cond49 = ____switch49 == ____exports.GameState.CHOOSING_UPGRADE
-        if ____cond49 then
+        local ____switch47 = self.gameState
+        local ____cond47 = ____switch47 == ____exports.GameState.CHOOSING_UPGRADE
+        if ____cond47 then
             self.upgradeManager:drawHandCards(self.std)
             break
         end

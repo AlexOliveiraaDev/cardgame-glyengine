@@ -29,7 +29,7 @@ ____exports.UpgradeManager = __TS__Class()
 local UpgradeManager = ____exports.UpgradeManager
 UpgradeManager.name = "UpgradeManager"
 function UpgradeManager.prototype.____constructor(self, player)
-    self.UPGRADE_QUANTITY = 4
+    self.UPGRADE_QUANTITY = 2
     self.cardsQuantity = 4
     self.selectedCard = 0
     self.player = player

@@ -1,6 +1,6 @@
 export const GameConfig = {
   // Configurações das cartas
-  HAND_SIZE: 5,
+  HAND_SIZE: 7,
   CARD_WIDTH: 71,
   CARD_HEIGHT: 100,
   CARD_SPACING: 20,

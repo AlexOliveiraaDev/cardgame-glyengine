@@ -1,6 +1,6 @@
 local ____exports = {}
 ____exports.GameConfig = {
-    HAND_SIZE = 5,
+    HAND_SIZE = 7,
     CARD_WIDTH = 71,
     CARD_HEIGHT = 100,
     CARD_SPACING = 20,

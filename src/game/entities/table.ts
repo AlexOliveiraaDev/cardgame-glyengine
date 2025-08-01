@@ -8,8 +8,7 @@ import { createCardInstance } from "../utils/CardFactory";
 export class Table {
   lastOpponentCard: Card;
   lastPlayerCard: Card;
-  playerCardHistory: Card[] = [];
-  opponentCardHistory: Card[] = [];
+
   currentCard: Card;
   std: GlyStd;
   player: Player;

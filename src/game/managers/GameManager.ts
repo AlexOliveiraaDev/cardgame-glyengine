@@ -37,26 +37,14 @@ export class GameManager {
   }
 
   private initializeGame() {
+    console.log("intializing game");
     this.player = new Player();
     this.opponent = new Opponent(GameConfig.DEFAULT_OPPONENT_DUMBNESS);
     this.table = new Table(this.std);
     this.upgradeManager = new UpgradeManager(this.player);
 
-    // Gerar mãos iniciais
-    this.player.hand.generateNewHand(CARD_LIST);
-    this.opponent.generateNewHand(CARD_LIST);
-
-    // Posicionar cartas
-    this.player.hand.setCardsPosition(this.std.app.width, this.std.app.height);
-    this.opponent.setCardsPosition(this.std.app.width, this.std.app.height);
-    //this.opponent.hideCards();
-
-    // Selecionar primeira carta do jogador
-    if (this.player.hand.getAllCards().length > 0) {
-      this.player.hand.getAllCards()[0].up();
-    }
-
-    this.gameState = GameState.WAITING_PLAYER_INPUT;
+    this.gameState = GameState.CHOOSING_UPGRADE;
+    this.upgradeManager.setCardsCenterPosition(this.std.app.width, this.std.app.height);
     this.gameStateText = "Escolha sua carta";
   }
 
@@ -171,13 +159,14 @@ export class GameManager {
     // Aplicar efeitos de upgrade aqui
     const upgrades = player.getUpgrades();
     for (const upgrade of upgrades) {
-      switch (upgrade.special_effect) {
-        case 1: // Combo de Naipes
-          value = this.applyComboNaipes(player.getCardHistory(), value);
-          break;
-        // Adicionar outros efeitos conforme necessário
-      }
+      // switch (upgrade.special_effect) {
+      //   case 1: // Combo de Naipes
+      //     value = this.applyComboNaipes(player.getCardHistory(), value);
+      //     break;
+      //   // Adicionar outros efeitos conforme necessário
+      // }
     }
+    value = this.applyComboNaipes(player.getCardHistory(), value);
 
     return value;
   }
@@ -194,6 +183,7 @@ export class GameManager {
     }
 
     if (count >= 3) {
+      console.log("aplicando dobro do valor");
       return value * 2; // Dobrar valor na 3ª carta do mesmo naipe
     }
 
@@ -224,6 +214,7 @@ export class GameManager {
   }
 
   private resetGame() {
+    console.log("reseting game");
     // Reset match points
     this.player.matchPoints = 0;
     this.opponent.matchPoints = 0;

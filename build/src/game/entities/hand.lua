@@ -110,6 +110,8 @@ local ____vector2 = require("src.core.spatial.vector2")
 local Vector2 = ____vector2.Vector2
 local ____card = require("src.game.entities.card")
 local Card = ____card.Card
+local ____GameConfig = require("src.game.config.GameConfig")
+local GameConfig = ____GameConfig.GameConfig
 ____exports.Hand = __TS__Class()
 local Hand = ____exports.Hand
 Hand.name = "Hand"
@@ -117,7 +119,7 @@ function Hand.prototype.____constructor(self)
     self.cards = {}
     self.upgrades = {}
     self.selectedCard = 0
-    self.cardsQuantity = 5
+    self.cardsQuantity = GameConfig.HAND_SIZE
 end
 function Hand.prototype.generateNewHand(self, deck)
     print("# Generating New Hand #")
