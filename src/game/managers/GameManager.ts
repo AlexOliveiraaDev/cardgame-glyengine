@@ -7,9 +7,12 @@ import { WaitManager } from "../../core/utils/waitManager";
 import { CARD_LIST } from "../data/CardDefinitions";
 import { Card } from "../entities/card";
 import { GameConfig } from "../config/GameConfig";
+import { MenuManager } from "./menuManager";
+
 // Fixed import path - assuming GameConfig is in the config folder
 
 export enum GameState {
+  MENU = "MENU",
   WAITING_PLAYER_INPUT = "WAITING_PLAYER_INPUT",
   PLAYER_TURN_ANIMATION = "PLAYER_TURN_ANIMATION",
   WAITING_ENEMY_TURN = "WAITING_ENEMY_TURN",
@@ -19,6 +22,11 @@ export enum GameState {
   GAME_OVER = "GAME_OVER",
 }
 
+export enum TurnType {
+  PLAYER_FIRST = "PLAYER_FIRST",
+  OPPONENT_FIRST = "OPPONENT_FIRST",
+}
+
 export class GameManager {
   private std: GlyStd;
   private table: Table;
@@ -26,6 +34,12 @@ export class GameManager {
   private opponent: Opponent;
   private upgradeManager: UpgradeManager;
   private waitManager: WaitManager;
+  private menuManager: MenuManager;
+
+  private currentTurn: TurnType = TurnType.PLAYER_FIRST;
+  private roundNumber: number = 1;
+  private firstPlayerCard: Card | null = null;
+  private isWaitingForSecondPlayer: boolean = false;
 
   public gameState: GameState = GameState.WAITING_PLAYER_INPUT;
   public gameStateText: string = "Escolha sua carta";
@@ -33,42 +47,32 @@ export class GameManager {
   constructor(std: GlyStd) {
     this.std = std;
     this.waitManager = new WaitManager();
+    this.menuManager = new MenuManager(std);
     this.initializeGame();
+    this.gameState = GameState.MENU;
+    this.gameStateText = "Menu Principal";
   }
 
+  // private initializeGame() {
+  //   console.log("intializing game");
+  //   this.player = new Player();
+  //   this.opponent = new Opponent(GameConfig.DEFAULT_OPPONENT_DUMBNESS);
+  //   this.table = new Table(this.std);
+  //   this.upgradeManager = new UpgradeManager(this.player);
+
+  //   this.gameState = GameState.CHOOSING_UPGRADE;
+  //   this.upgradeManager.setCardsCenterPosition(this.std.app.width, this.std.app.height);
+  //   this.gameStateText = "Escolha sua carta";
+  // }
+
   private initializeGame() {
-    console.log("intializing game");
+    console.log("Initializing game from menu...");
     this.player = new Player();
     this.opponent = new Opponent(GameConfig.DEFAULT_OPPONENT_DUMBNESS);
     this.table = new Table(this.std);
     this.upgradeManager = new UpgradeManager(this.player);
-
-    this.gameState = GameState.CHOOSING_UPGRADE;
-    this.upgradeManager.setCardsCenterPosition(this.std.app.width, this.std.app.height);
-    this.gameStateText = "Escolha sua carta";
   }
 
-  public handlePlayerCardSelection() {
-    if (this.gameState !== GameState.WAITING_PLAYER_INPUT) return;
-
-    const selectedCard = this.player.getSelectedCard();
-    this.table.setPlayerCard(selectedCard);
-
-    this.gameState = GameState.PLAYER_TURN_ANIMATION;
-    this.gameStateText = "Jogador jogou!";
-
-    this.waitManager.addWait({
-      id: "player_card_animation",
-      duration: GameConfig.CARD_ANIMATION_DURATION,
-      onComplete: () => {
-        console.log("Turno do oponente");
-        this.gameState = GameState.WAITING_ENEMY_TURN;
-        this.gameStateText = "Oponente pensando...";
-        this.handleOpponentTurn();
-      },
-      onUpdate: (progress) => {},
-    });
-  }
   public cleanTable() {
     this.table.cleanTable();
   }
@@ -108,8 +112,14 @@ export class GameManager {
     let playerValue = this.calculateCardValue(playerCard, this.player);
     let opponentValue = opponentCard.value;
 
-    console.log(`Jogador: ${playerValue} vs Oponente: ${opponentValue}`);
-    console.log("Duração do cálculo:", GameConfig.RESULT_CALCULATION_TIME);
+    // Determinar quem atacou e quem revidou
+    const playerAttacked = this.currentTurn === TurnType.PLAYER_FIRST;
+    const attackerValue = playerAttacked ? playerValue : opponentValue;
+    const defenderValue = playerAttacked ? opponentValue : playerValue;
+
+    console.log(`Rodada ${this.roundNumber}`);
+    console.log(`${playerAttacked ? "Jogador" : "Oponente"} atacou: ${attackerValue}`);
+    console.log(`${playerAttacked ? "Oponente" : "Jogador"} revidou: ${defenderValue}`);
 
     this.waitManager.addWait({
       id: "calculating_results",
@@ -132,25 +142,56 @@ export class GameManager {
         if (this.player.getHandCards().length === 0) {
           this.handleEndGame();
         } else {
-          // Continuar jogo
+          // Alternar turnos para próxima rodada
+          this.alternateFirstPlayer();
+
           this.waitManager.addWait({
-            id: "finish_player_turn",
+            id: "finish_round",
             duration: 1,
             onComplete: () => {
-              console.log("limpando mesa");
               this.cleanTable();
+              this.startNewRound();
             },
           });
-
-          console.log("timeout");
-          this.gameState = GameState.WAITING_PLAYER_INPUT;
-          this.gameStateText = "Escolha sua carta";
         }
       },
       onUpdate: (progress) => {
         console.log(`Calculando resultado: ${Math.round(progress * 100)}%`);
       },
     });
+  }
+
+  // Nova função para alternar quem começa
+  private alternateFirstPlayer() {
+    this.currentTurn = this.currentTurn === TurnType.PLAYER_FIRST ? TurnType.OPPONENT_FIRST : TurnType.PLAYER_FIRST;
+
+    this.roundNumber++;
+    console.log(
+      `Próxima rodada (${this.roundNumber}): ${
+        this.currentTurn === TurnType.PLAYER_FIRST ? "Jogador" : "Oponente"
+      } começa`
+    );
+  }
+
+  // Nova função para iniciar uma nova rodada
+  private startNewRound() {
+    this.firstPlayerCard = null;
+
+    if (this.currentTurn === TurnType.PLAYER_FIRST) {
+      this.gameState = GameState.WAITING_PLAYER_INPUT;
+      this.gameStateText = "Sua vez de atacar!";
+    } else {
+      this.gameState = GameState.WAITING_ENEMY_TURN;
+      this.gameStateText = "Oponente vai atacar primeiro...";
+      // Pequeno delay antes do oponente jogar para dar tempo do jogador ler
+      this.waitManager.addWait({
+        id: "opponent_first_delay",
+        duration: 0.5,
+        onComplete: () => {
+          this.handleOpponentFirstMove();
+        },
+      });
+    }
   }
 
   private calculateCardValue(card: Card, player: Player): number {
@@ -213,34 +254,33 @@ export class GameManager {
     this.gameStateText = "Escolha sua carta";
   }
 
-  private resetGame() {
-    console.log("reseting game");
-    // Reset match points
-    this.player.matchPoints = 0;
-    this.opponent.matchPoints = 0;
+  public handleInput(key: string) {
+    // Se estamos no menu, delegar para o MenuManager
+    if (this.gameState === GameState.MENU) {
+      const handled = this.menuManager.handleInput(key);
 
-    // Gerar novas mãos
-    this.player.hand.generateNewHand(CARD_LIST);
-    this.opponent.generateNewHand(CARD_LIST);
+      // Se o menu mudou para GAME, inicializar o jogo
+      if (this.menuManager.isInGame()) {
+        this.initializeGame();
+        this.gameState = GameState.CHOOSING_UPGRADE;
+        this.upgradeManager.setCardsCenterPosition(this.std.app.width, this.std.app.height);
+        this.gameStateText = "Escolha seu primeiro upgrade!";
+      }
 
-    // Reposicionar cartas
-    this.player.hand.setCardsPosition(this.std.app.width, this.std.app.height);
-    this.opponent.setCardsPosition(this.std.app.width, this.std.app.height);
-    //this.opponent.hideCards();
-
-    // Selecionar primeira carta
-    if (this.player.hand.getAllCards().length > 0) {
-      this.player.hand.getAllCards()[0].up();
+      return;
     }
 
-    // Limpar mesa
-    this.table.lastPlayerCard = null;
-    this.table.lastOpponentCard = null;
-  }
+    // Game Over - permitir voltar ao menu
+    if (this.gameState === GameState.GAME_OVER) {
+      if (key === "menu" || key === "action") {
+        this.menuManager.returnToMenu();
+        this.gameState = GameState.MENU;
+        return;
+      }
+      return;
+    }
 
-  public handleInput(key: string) {
-    if (this.gameState === GameState.GAME_OVER) return;
-
+    // Sistema de turnos alternados - input do jogador
     if (this.gameState === GameState.WAITING_PLAYER_INPUT) {
       switch (key) {
         case "left":
@@ -250,11 +290,16 @@ export class GameManager {
           this.player.hand.switchActiveCard(true);
           break;
         case "action":
-          this.handlePlayerCardSelection();
+          if (this.currentTurn === TurnType.PLAYER_FIRST) {
+            this.handlePlayerCardSelection();
+          } else {
+            this.handlePlayerResponse();
+          }
           break;
       }
     }
 
+    // Seleção de upgrade
     if (this.gameState === GameState.CHOOSING_UPGRADE) {
       switch (key) {
         case "left":
@@ -269,8 +314,147 @@ export class GameManager {
       }
     }
   }
+  private resetGame() {
+    console.log("reseting game");
+
+    // Reset das propriedades de turno
+    this.currentTurn = TurnType.PLAYER_FIRST;
+    this.roundNumber = 1;
+    this.firstPlayerCard = null;
+
+    // Reset match points
+    this.player.matchPoints = 0;
+    this.opponent.matchPoints = 0;
+
+    // Gerar novas mãos
+    this.player.hand.generateNewHand(CARD_LIST);
+    this.opponent.generateNewHand(CARD_LIST);
+
+    // Reposicionar cartas
+    this.player.hand.setCardsPosition(this.std.app.width, this.std.app.height);
+    this.opponent.setCardsPosition(this.std.app.width, this.std.app.height);
+
+    // Selecionar primeira carta
+    if (this.player.hand.getAllCards().length > 0) {
+      this.player.hand.getAllCards()[0].up();
+    }
+
+    // Limpar mesa
+    this.table.lastPlayerCard = null;
+    this.table.lastOpponentCard = null;
+  }
+  public getCurrentTurnInfo(): { turn: TurnType; round: number } {
+    return {
+      turn: this.currentTurn,
+      round: this.roundNumber,
+    };
+  }
+  // Nova função para lidar com o jogador atacando primeiro
+  public handlePlayerCardSelection() {
+    if (this.gameState !== GameState.WAITING_PLAYER_INPUT) return;
+    if (this.currentTurn !== TurnType.PLAYER_FIRST) return;
+
+    const selectedCard = this.player.getSelectedCard();
+    this.table.setPlayerCard(selectedCard);
+    this.firstPlayerCard = selectedCard;
+
+    this.gameState = GameState.PLAYER_TURN_ANIMATION;
+    this.gameStateText = "Jogador atacou! Oponente vai revidar...";
+
+    this.waitManager.addWait({
+      id: "player_card_animation",
+      duration: GameConfig.CARD_ANIMATION_DURATION,
+      onComplete: () => {
+        this.gameState = GameState.WAITING_ENEMY_TURN;
+        this.gameStateText = "Oponente revidando...";
+        this.handleOpponentResponse();
+      },
+      onUpdate: (progress) => {},
+    });
+  }
+
+  public handleOpponentFirstMove() {
+    if (this.gameState !== GameState.WAITING_ENEMY_TURN) return;
+
+    this.gameState = GameState.ENEMY_TURN_ANIMATION;
+    this.gameStateText = "Oponente atacando...";
+
+    this.waitManager.addWait({
+      id: "opponent_thinking",
+      duration: GameConfig.OPPONENT_THINKING_TIME,
+      onComplete: () => {
+        // Oponente escolhe carta sem saber a do jogador
+        const opponentCards = this.opponent.hand.getAllCards();
+        const randomCard = opponentCards[Math.floor(Math.random() * opponentCards.length)];
+
+        console.log(`Oponente atacou com: ${randomCard.name}`);
+        this.opponent.removeSelectedCard(randomCard);
+        this.table.setOpponentCard(randomCard);
+        this.firstPlayerCard = randomCard;
+
+        this.waitManager.addWait({
+          id: "opponent_card_animation",
+          duration: GameConfig.CARD_ANIMATION_DURATION,
+          onComplete: () => {
+            this.gameState = GameState.WAITING_PLAYER_INPUT;
+            this.gameStateText = "Oponente atacou! Sua vez de revidar!";
+          },
+        });
+      },
+      onUpdate: (progress) => {},
+    });
+  }
+
+  private handleOpponentResponse() {
+    if (this.gameState !== GameState.WAITING_ENEMY_TURN) return;
+
+    this.gameState = GameState.ENEMY_TURN_ANIMATION;
+
+    this.waitManager.addWait({
+      id: "opponent_thinking",
+      duration: GameConfig.OPPONENT_THINKING_TIME,
+      onComplete: () => {
+        const opponentSelectedCard: Card = this.opponent.getBestCard(this.firstPlayerCard!);
+        console.log(`Oponente revidou com: ${opponentSelectedCard.name}`);
+        this.table.setOpponentCard(opponentSelectedCard);
+
+        this.waitManager.addWait({
+          id: "opponent_response_animation",
+          duration: GameConfig.CARD_ANIMATION_DURATION,
+          onComplete: () => {
+            this.handleGameCalculation();
+          },
+        });
+      },
+      onUpdate: (progress) => {},
+    });
+  }
+
+  public handlePlayerResponse() {
+    if (this.gameState !== GameState.WAITING_PLAYER_INPUT) return;
+    if (this.currentTurn !== TurnType.OPPONENT_FIRST) return;
+
+    const selectedCard = this.player.getSelectedCard();
+    this.table.setPlayerCard(selectedCard);
+
+    this.gameState = GameState.PLAYER_TURN_ANIMATION;
+    this.gameStateText = "Jogador revidou!";
+
+    this.waitManager.addWait({
+      id: "player_response_animation",
+      duration: GameConfig.CARD_ANIMATION_DURATION,
+      onComplete: () => {
+        this.handleGameCalculation();
+      },
+      onUpdate: (progress) => {},
+    });
+  }
 
   public update(dt: number) {
+    if (this.gameState === GameState.MENU) {
+      this.menuManager.update(dt);
+      return;
+    }
     this.waitManager.tick(dt);
     this.table.tick(dt);
 
@@ -280,10 +464,25 @@ export class GameManager {
   }
 
   public render() {
+    if (this.gameState === GameState.MENU) {
+      this.menuManager.render();
+      return;
+    }
+
     if (this.gameState === GameState.GAME_OVER) {
       this.std.draw.color(this.std.color.white);
       this.std.text.font_size(50);
-      this.std.text.print(this.std.app.width / 2 - 100, this.std.app.height / 2 - 25, "Game Over");
+      this.std.text.print_ex(this.std.app.width / 2, this.std.app.height / 2 - 50, "Game Over", 0, 0);
+
+      this.std.text.font_size(20);
+      this.std.draw.color(this.std.color.gray);
+      this.std.text.print_ex(
+        this.std.app.width / 2,
+        this.std.app.height / 2 + 20,
+        "A ou MENU para voltar ao menu",
+        0,
+        0
+      );
       return;
     }
 
@@ -314,5 +513,9 @@ export class GameManager {
 
   public getOpponent(): Opponent {
     return this.opponent;
+  }
+
+  public getMenuManager(): MenuManager {
+    return this.menuManager;
   }
 }

@@ -8,10 +8,10 @@ export const UPGRADE_CARD_LIST: UpgradeCardDefinition[] = [
     special_effect: 1, // 3 cartas do mesmo naipe: 3ª carta vale o dobro
   },
   {
-    id: "carta_marcada",
-    name: "Carta Marcada",
+    id: "eco_inverso",
+    name: "Eco Inverso",
     texture: "card2.png",
-    special_effect: 2, // valor aleatório escolhido no início: +2 se jogar ele
+    special_effect: 2, // mesma carta em sequência: +3
   },
   {
     id: "baralho_ensanguentado",

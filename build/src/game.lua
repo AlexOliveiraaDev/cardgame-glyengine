@@ -288,10 +288,7 @@ local function loop(std, game)
     end)
 end
 local function draw(std, game)
-    if not doOnce then
-        doOnce = true
-        std.media.video():src("assets/bg.mp4"):play():resize(std.app.width, std.app.height)
-    end
+    std.image.draw("assets/bg.png", 0, 0)
     std.draw.color(std.color.white)
     std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL)
     std.text.font_name(GameConfig.UI_FONT_NAME)
@@ -355,19 +352,22 @@ local function key(std, key)
     if pressed then
         return
     end
+    local keyString = ""
     if std.key.press.left then
-        gameManager:handleInput("left")
+        keyString = "left"
+    elseif std.key.press.right then
+        keyString = "right"
+    elseif std.key.press.up then
+        keyString = "up"
+    elseif std.key.press.down then
+        keyString = "down"
+    elseif std.key.press.a then
+        keyString = "action"
+    elseif std.key.press.menu then
+        keyString = "menu"
     end
-    if std.key.press.right then
-        gameManager:handleInput("right")
-    end
-    if std.key.press.a then
-        print("aaaa")
-        gameManager:handleInput("action")
-    end
-    if std.key.press.menu then
-        print("Resetting game...")
-        gameManager = __TS__New(GameManager, std)
+    if keyString then
+        gameManager:handleInput(keyString)
     end
 end
 local function exit(std, game)

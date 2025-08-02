@@ -41,10 +41,8 @@ async function loop(std: GlyStd, game: any) {
 }
 
 function draw(std: GlyStd, game: any) {
-  if (!doOnce) {
-    doOnce = true;
-    std.media.video().src("assets/bg.mp4").play().resize(std.app.width, std.app.height);
-  }
+  std.image.draw("assets/bg.png", 0, 0);
+
   std.draw.color(std.color.white);
   std.text.font_size(GameConfig.UI_FONT_SIZE_SMALL);
   std.text.font_name(GameConfig.UI_FONT_NAME);
@@ -77,25 +75,19 @@ function draw(std: GlyStd, game: any) {
 function key(std: GlyStd, key) {
   if (pressed) return;
 
-  if (std.key.press.left) {
-    gameManager.handleInput("left");
-  }
+  let keyString = "";
 
-  if (std.key.press.right) {
-    gameManager.handleInput("right");
-  }
+  if (std.key.press.left) keyString = "left";
+  else if (std.key.press.right) keyString = "right";
+  else if (std.key.press.up) keyString = "up";
+  else if (std.key.press.down) keyString = "down";
+  else if (std.key.press.a) keyString = "action";
+  else if (std.key.press.menu) keyString = "menu";
 
-  if (std.key.press.a) {
-    console.log("aaaa");
-    gameManager.handleInput("action");
-  }
-
-  if (std.key.press.menu) {
-    console.log("Resetting game...");
-    gameManager = new GameManager(std);
+  if (keyString) {
+    gameManager.handleInput(keyString);
   }
 }
-
 function exit(std: GlyStd, game: any) {
   console.log("Game exiting...");
 }

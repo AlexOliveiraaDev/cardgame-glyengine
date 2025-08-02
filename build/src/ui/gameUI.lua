@@ -72,7 +72,7 @@ function ____exports.printUpgradeInfo(std, upgrades)
     )
 end
 function ____exports.printControls(std)
-    local controls = {"← → : Navegar", "A/Enter : Selecionar", "R : Reset (Debug)"}
+    local controls = {"← → : Navegar", "Z/Enter : Selecionar"}
     local x = std.app.width - 150
     local y = 20
     std.draw.color(204)
@@ -83,7 +83,7 @@ function ____exports.printControls(std)
         160,
         #controls * 15 + 10
     )
-    std.draw.color(4294967295)
+    std.draw.color(std.color.white)
     std.text.font_size(10)
     __TS__ArrayForEach(
         controls,
@@ -101,7 +101,7 @@ function ____exports.printCardInfo(std, card, x, y)
         "Valor: " .. tostring(card.value),
         card.is_special and "Especial: Sim" or "Especial: Não"
     }
-    std.draw.color(230)
+    std.draw.color(std.color.white)
     std.draw.rect(
         0,
         x - 5,

@@ -13,3 +13,5 @@ export function applyComboNaipes(cardHistory: Card[], value: number): number {
     return value * 3;
   }
 }
+
+export function applyCartaMarcada() {}

@@ -57,4 +57,6 @@ function ____exports.applyComboNaipes(cardHistory, value)
         return value * 3
     end
 end
+function ____exports.applyCartaMarcada()
+end
 return ____exports

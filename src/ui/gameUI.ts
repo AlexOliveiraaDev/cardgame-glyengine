@@ -68,7 +68,7 @@ export function printUpgradeInfo(std: GlyStd, upgrades: any[]) {
 }
 
 export function printControls(std: GlyStd) {
-  const controls = ["← → : Navegar", "A/Enter : Selecionar", "R : Reset (Debug)"];
+  const controls = ["← → : Navegar", "Z/Enter : Selecionar"];
 
   const x = std.app.width - 150;
   const y = 20;
@@ -78,7 +78,7 @@ export function printControls(std: GlyStd) {
   std.draw.rect(0, x - 10, y - 5, 160, controls.length * 15 + 10);
 
   // Controles
-  std.draw.color(0xffffffff);
+  std.draw.color(std.color.white);
   std.text.font_size(10);
   controls.forEach((control, index) => {
     std.text.print(x, y + index * 15, control);
@@ -91,7 +91,7 @@ export function printCardInfo(std: GlyStd, card: any, x: number, y: number) {
   const info = [`Nome: ${card.name}`, `Valor: ${card.value}`, card.is_special ? "Especial: Sim" : "Especial: Não"];
 
   // Fundo
-  std.draw.color(0x000000e6);
+  std.draw.color(std.color.white);
   std.draw.rect(0, x - 5, y - 5, 120, info.length * 12 + 10);
 
   // Informações
