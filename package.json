@@ -11,6 +11,7 @@
     "@gamely/gly-cli": "^0.3.6",
     "@gamely/gly-types": "^0.2.2",
     "@gamely/tstl-number": "^0.0.3",
+    "@gamely/console-types": "^1.0.0",
     "typescript-to-lua": "^1.31.2",
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.10"
