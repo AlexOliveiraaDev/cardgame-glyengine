@@ -10,6 +10,9 @@
     "luaLibImport": "inline",
     "noImplicitGlobalVariables": true,
     "noImplicitSelf": true,
-    "noHeader": true
+    "noHeader": true,
+    "luaPlugins": [
+      { "name": "@gamely/tstl-number" },
+    ]
   }
 }

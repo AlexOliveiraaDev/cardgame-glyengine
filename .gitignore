@@ -1,5 +1,8 @@
 .DS_Store
 Thumbs.db
 vendor
+dist/
+build/  
 cli.lua
 node_modules
+package-lock.json

@@ -1,15 +1,14 @@
 {
   "scripts": {
     "prebuild": "tstl",
-    "copy-html": "gly-cli meta package.json --infile source\\engine\\meta\\html5\\index.mustache --outfile dist\\index.html",
-    "copy-imgs": "robocopy src\\game\\assets dist\\assets /E || exit 0",
-    "build": "gly-cli build-html --cwd build src/game.lua --bundler --fengari --enginecdn --videojs && npm run copy-imgs",
+    "build": "gly-cli build-html --cwd build src/game.lua --bundler --fengari --enginecdn --videojs",
     "start": "npx serve ./dist",
     "dev": "concurrently \"npm run start\" \"nodemon --watch src --ext ts,json,lua --exec \\\"npm run build\\\"\""
   },
   "dependencies": {
-    "@gamely/gly-cli": "^0.1.2",
-    "@gamely/gly-types": "^0.1.2",
+    "@gamely/gly-cli": "^0.3.6",
+    "@gamely/gly-types": "^0.2.2",
+    "@gamely/tstl-number": "^0.0.3",
     "typescript-to-lua": "^1.31.2"
   },
   "devDependencies": {
