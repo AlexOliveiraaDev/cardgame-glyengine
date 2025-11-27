@@ -9,6 +9,7 @@ import {
 } from "./ui/gameUI";
 import { GameManager } from "./game/managers/GameManager";
 import { GameConfig } from "./game/config/GameConfig";
+export { assets } from "./assets";
 
 /*####################################################################*/
 /*############################  Configs  #############################*/
@@ -25,12 +26,12 @@ export const meta = {
   description: "",
 };
 
-function init(std: GlyStd, game: any) {
+function init(_: never, std: GlyStd) {
   console.log("Initializing game...");
   gameManager = new GameManager(std);
 }
 
-async function loop(std: GlyStd, game: any) {
+async function loop(_: never, std: GlyStd) {
   if (std.key.press.any) {
     pressed = true;
   } else {
@@ -40,7 +41,7 @@ async function loop(std: GlyStd, game: any) {
   gameManager.update(std.delta);
 }
 
-function draw(std: GlyStd, game: any) {
+function draw(_: never, std: GlyStd) {
   std.image.draw("assets/bg.png", 0, 0);
 
   std.draw.color(std.color.white);
@@ -72,7 +73,7 @@ function draw(std: GlyStd, game: any) {
   }
 }
 
-function key(std: GlyStd, key) {
+function key(_:never, std: GlyStd) {
   if (pressed) return;
 
   let keyString = "";
@@ -88,7 +89,7 @@ function key(std: GlyStd, key) {
     gameManager.handleInput(keyString);
   }
 }
-function exit(std: GlyStd, game: any) {
+function exit(_: never, std: GlyStd) {
   console.log("Game exiting...");
 }
 
